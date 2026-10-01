@@ -252,6 +252,31 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-weight: 600;
 }
 .primary-action:hover { filter: brightness(1.05); }
+.investigate-cta { font-size: 1rem; padding: 0.6rem 0.95rem; }
+.pending-line { display: flex; gap: 0.5rem; align-items: center; }
+.pending-mark {
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  flex: none;
+  animation: pending-pulse 1.2s ease-in-out infinite;
+}
+.text-button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.evidence-list li[data-active="true"] { outline: 1px solid var(--accent); }
+@media (prefers-reduced-motion: reduce) {
+  .pending-mark { animation: none; }
+}
+@keyframes pending-pulse {
+  50% { opacity: 0.35; }
+}
 .severity-low { color: var(--muted); }
 .severity-medium { color: #d7c4a1; border-color: #8a7352; }
 .severity-high, .severity-critical { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }

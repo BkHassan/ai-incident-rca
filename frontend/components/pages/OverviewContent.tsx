@@ -23,8 +23,8 @@ export function OverviewContent({ incidentId }: { incidentId: string | null }) {
         <Kicker>Overview</Kicker>
         <PageTitle>Investigate one incident</PageTitle>
         <Body>
-          This console is the entry to root-cause investigation. Start by selecting an incident id. The
-          investigation view itself is not built in this step.
+          This console is the entry to root-cause investigation. Start from the incident catalog. Investigate
+          sends one request and shows the RCA result that comes back.
         </Body>
       </header>
       <Card>

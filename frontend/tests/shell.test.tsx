@@ -33,9 +33,10 @@ describe("product shell", () => {
     expect(screen.queryByText(/uptime|revenue|users online|% of incidents/i)).not.toBeInTheDocument();
   });
 
-  it("does not render an investigation result", () => {
+  it("does not render an investigation result before the request", () => {
     render(<InvestigationsContent incidentId="INC-011" />);
-    expect(screen.getByText(/does not run that call/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Investigate incident" })).toBeInTheDocument();
+    expect(screen.getByText(/has not been sent/i)).toBeInTheDocument();
     expect(screen.queryByText(/Database connection pool/i)).not.toBeInTheDocument();
   });
 

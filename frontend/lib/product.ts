@@ -27,7 +27,7 @@ export const navigation = [
   {
     href: "/investigations",
     label: "Investigations",
-    description: "Investigation result, not built in this step",
+    description: "Run one investigation",
   },
   {
     href: "/knowledge",
@@ -48,6 +48,10 @@ export function parseIncidentId(value: string | undefined): string | null {
 export function hrefWithIncident(href: string, incidentId: string | null): string {
   if (!incidentId) return href;
   return `${href}?incident=${incidentId}`;
+}
+
+export function investigationHref(incidentId: string): string {
+  return `/investigations?incident=${incidentId}&run=1`;
 }
 
 export function incidentIdFromPath(pathname: string): string | null {

@@ -96,7 +96,7 @@ describe("incident explorer", () => {
     render(<IncidentDetailView incident={detail} />);
     expect(screen.getByRole("link", { name: "Investigate incident" })).toHaveAttribute(
       "href",
-      "/investigations?incident=INC-011",
+      "/investigations?incident=INC-011&run=1",
     );
     expect(screen.getByText("Observed logs")).toBeInTheDocument();
     expect(screen.getByText("Detector windows")).toBeInTheDocument();

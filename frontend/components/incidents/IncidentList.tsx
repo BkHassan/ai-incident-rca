@@ -13,7 +13,7 @@ import {
   uniqueSorted,
   type IncidentSummary,
 } from "@/lib/incidents";
-import { hrefWithIncident } from "@/lib/product";
+import { investigationHref } from "@/lib/product";
 
 export function IncidentList({ incidents }: { incidents: IncidentSummary[] }) {
   const [query, setQuery] = useState("");
@@ -137,7 +137,7 @@ function IncidentPreview({ incident }: { incident: IncidentSummary }) {
       </dl>
       <Meta>The alerting service is where the alert fired. It is not a proven cause.</Meta>
       <div className="action-row">
-        <Link className="primary-action" href={hrefWithIncident("/investigations", incident.incident_id)}>
+        <Link className="primary-action investigate-cta" href={investigationHref(incident.incident_id)}>
           Investigate incident
         </Link>
         <Link className="text-link" href={`/incidents/${incident.incident_id}`}>

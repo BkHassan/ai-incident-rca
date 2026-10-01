@@ -3,7 +3,7 @@ import { SeverityBadge } from "@/components/incidents/SeverityBadge";
 import { Section } from "@/components/ui/Section";
 import { Body, Kicker, Meta, PageTitle } from "@/components/ui/Type";
 import { formatDuration, formatTimestamp, type IncidentDetail } from "@/lib/incidents";
-import { hrefWithIncident } from "@/lib/product";
+import { investigationHref } from "@/lib/product";
 
 export function IncidentDetailView({ incident }: { incident: IncidentDetail }) {
   return (
@@ -47,7 +47,7 @@ export function IncidentDetailView({ incident }: { incident: IncidentDetail }) {
         <Meta>The alerting service is where the alert fired. It is not a proven cause.</Meta>
       </Section>
       <div className="action-row">
-        <Link className="primary-action" href={hrefWithIncident("/investigations", incident.incident_id)}>
+        <Link className="primary-action investigate-cta" href={investigationHref(incident.incident_id)}>
           Investigate incident
         </Link>
         <Link className="text-link" href="/incidents">
