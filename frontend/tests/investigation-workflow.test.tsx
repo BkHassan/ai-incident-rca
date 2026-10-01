@@ -63,8 +63,9 @@ describe("investigation workflow", () => {
     expect(screen.getByText("requests queued in payment-api")).toBeInTheDocument();
     expect(screen.getByText(/not a probability/i)).toBeInTheDocument();
     expect(screen.getByText(/not the cause of this incident/i)).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const posts = fetchMock.mock.calls.filter((call) => (call[1] as RequestInit | undefined)?.method === "POST");
+    expect(posts).toHaveLength(1);
+    const [url, init] = posts[0] as [string, RequestInit];
     expect(url).toContain("/api/incidents/investigate");
     expect(init.method).toBe("POST");
     expect(init.body).toBe(JSON.stringify({ incident_id: "INC-011" }));

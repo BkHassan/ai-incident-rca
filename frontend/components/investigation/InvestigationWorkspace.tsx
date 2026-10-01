@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { RcaWorkspace } from "@/components/investigation/RcaWorkspace";
+import { RetrievalContext } from "@/components/investigation/RetrievalContext";
 import { EmptyState } from "@/components/ui/Section";
 import { Body, Kicker, Meta, PageTitle } from "@/components/ui/Type";
 import { InvestigationClientError, runInvestigation } from "@/lib/api/investigation";
+import { loadRetrieval, RetrievalClientError } from "@/lib/api/retrieval";
+import type { RetrievalOrigin, RetrievalPayload } from "@/lib/retrieval";
 import type { RCAResult } from "@/lib/types";
 
 type Phase =
@@ -31,7 +34,29 @@ export function InvestigationWorkspace({
   autostart: boolean;
 }) {
   const [phase, setPhase] = useState<Phase>(autostart ? { phase: "investigating" } : { phase: "idle" });
+  const [retrieval, setRetrieval] = useState<{
+    origin: RetrievalOrigin | "loading" | "error";
+    payload: RetrievalPayload | null;
+    error: string | null;
+  }>({ origin: "loading", payload: null, error: null });
   const started = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setRetrieval({ origin: "loading", payload: null, error: null });
+    loadRetrieval(incidentId)
+      .then((loaded) => {
+        if (!cancelled) setRetrieval({ origin: loaded.origin, payload: loaded.payload, error: null });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof RetrievalClientError ? error.message : "The retrieval service could not be reached.";
+        setRetrieval({ origin: "error", payload: null, error: message });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [incidentId]);
 
   function investigate() {
     setPhase({ phase: "investigating" });
@@ -65,6 +90,12 @@ export function InvestigationWorkspace({
           </Body>
         ) : null}
       </header>
+      <RetrievalContext
+        incidentId={incidentId}
+        origin={retrieval.origin}
+        payload={retrieval.payload}
+        error={retrieval.error}
+      />
       {phase.phase === "idle" ? (
         <button type="button" className="primary-action investigate-cta" onClick={investigate}>
           Investigate incident

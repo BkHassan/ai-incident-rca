@@ -122,3 +122,45 @@ class IncidentDetail(IncidentSummary):
     timeline_available: bool
     observed_services: list[str]
     timeline: list[TimelineEvidence]
+
+
+class HistoricalHit(BaseModel):
+    """One historical incident returned by retrieval. The root cause is that past incident's record."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rank: int
+    incident_id: str
+    score: float
+    text: str
+    service: str | None = None
+    occurred_at: str | None = None
+    severity: str | None = None
+    duration_minutes: int | None = None
+    historical_root_cause: str | None = None
+    historical_root_cause_service: str | None = None
+
+
+class TechnicalHit(BaseModel):
+    """One technical-document chunk returned by retrieval."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rank: int
+    document_id: str
+    title: str
+    section: str
+    score: float
+    text: str
+    document_name: str | None = None
+
+
+class RetrievalResponse(BaseModel):
+    """Existing retrieval hits for one current incident. This is not an RCA result."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    incident_id: str
+    query: str
+    historical_incidents: list[HistoricalHit]
+    technical_documents: list[TechnicalHit]

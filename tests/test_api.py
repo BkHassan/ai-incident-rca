@@ -64,11 +64,13 @@ class _Retriever:
                 rank=1, incident_id="HIST-001", score=0.5,
                 text="latency and timeouts",
                 metadata={"incident_id": "HIST-001", "service": "payment-api", "date": "2024-04-06",
-                          "source_type": "historical_incident", "severity": "LOW", "duration_minutes": 16},
+                          "source_type": "historical_incident", "severity": "LOW", "duration_minutes": 16,
+                          "historical_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+                          "historical_root_cause_service": "acquirer-gateway"},
             ),),
             technical_documents=(TechnicalDocumentResult(
                 rank=1, document_id="networking_001", section="Downstream latency", score=0.5,
-                text="downstream latency is time spent off-box",
+                text="Document: Networking\nSection: Downstream latency\n\ndownstream latency is time spent off-box",
                 metadata={"document_id": "networking_001", "document_name": "networking.md",
                           "section": "Downstream latency", "source_type": "technical_document"},
             ),),
@@ -227,6 +229,31 @@ class CatalogApiTests(unittest.TestCase):
         for metric in body["anomaly_metrics"]:
             self.assertGreater(metric["point_count"] + metric["window_count"], 0)
             self.assertTrue(metric["label"])
+
+    def test_retrieval_returns_existing_hits(self):
+        response = TestClient(create_app(service=_service(_Investigator(result=_result())), load_env=False)).get(
+            "/api/incidents/INC-011/retrieval")
+        self.assertEqual(response.status_code, 200, response.text)
+        body = response.json()
+        self.assertEqual(body["incident_id"], "INC-011")
+        self.assertEqual(body["query"], "observational query")
+        historical = body["historical_incidents"][0]
+        self.assertEqual(historical["incident_id"], "HIST-001")
+        self.assertEqual(historical["score"], 0.5)
+        self.assertEqual(historical["text"], "latency and timeouts")
+        self.assertEqual(historical["historical_root_cause"], "DOWNSTREAM_SERVICE_TIMEOUT")
+        technical = body["technical_documents"][0]
+        self.assertEqual(technical["document_id"], "networking_001")
+        self.assertEqual(technical["title"], "Networking")
+        self.assertEqual(technical["section"], "Downstream latency")
+        self.assertEqual(technical["score"], 0.5)
+        self.assertNotIn("fixture", response.text)
+
+    def test_retrieval_without_a_store_returns_no_hits(self):
+        response = TestClient(create_app(load_env=False)).get("/api/incidents/INC-011/retrieval")
+        self.assertEqual(response.status_code, 503, response.text)
+        self.assertIn(response.json()["error"], ("configuration_error", "vector_store_missing"))
+        self.assertNotIn("historical_incidents", response.json())
 
     def test_unknown_catalog_incident(self):
         response = TestClient(create_app(load_env=False)).get("/api/incidents/INC-099")
