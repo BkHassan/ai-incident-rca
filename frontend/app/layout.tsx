@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { AppShell } from "@/components/shell/AppShell";
 import "./globals.css";
 
 const sans = IBM_Plex_Sans({
@@ -15,24 +16,15 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Incident investigation",
-  description: "Investigation view for one software incident.",
+  title: "Incident RCA",
+  description: "Incident intelligence console for root-cause investigation.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${sans.variable} ${mono.variable}`}>
-        <a className="skip" href="#investigation">
-          Skip to investigation
-        </a>
-        <div className="appbar">
-          <strong>Incident RCA</strong>
-          <span>Investigation</span>
-        </div>
-        <div className="shell" id="investigation">
-          {children}
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

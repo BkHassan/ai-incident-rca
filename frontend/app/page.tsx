@@ -1,5 +1,11 @@
-import { redirect } from "next/navigation";
+import { OverviewContent } from "@/components/pages/OverviewContent";
+import { parseIncidentId } from "@/lib/product";
 
-export default function HomePage() {
-  redirect("/investigation/INC-011");
+export default async function OverviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ incident?: string }>;
+}) {
+  const { incident } = await searchParams;
+  return <OverviewContent incidentId={parseIncidentId(incident)} />;
 }
