@@ -59,8 +59,8 @@ describe("investigation workflow", () => {
     render(<InvestigationWorkspace incidentId="INC-011" autostart={false} />);
     expect(screen.getByText(/has not been sent/i)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Investigate incident" }));
-    expect(await screen.findByText("Callers waited on payment-api.")).toBeInTheDocument();
-    expect(screen.getByText("requests queued in payment-api")).toBeInTheDocument();
+    expect((await screen.findAllByText("Callers waited on payment-api.")).length).toBeGreaterThan(0);
+    expect(screen.getAllByText("requests queued in payment-api").length).toBeGreaterThan(0);
     expect(screen.getByText(/not a probability/i)).toBeInTheDocument();
     expect(screen.getByText(/not the cause of this incident/i)).toBeInTheDocument();
     const posts = fetchMock.mock.calls.filter((call) => (call[1] as RequestInit | undefined)?.method === "POST");

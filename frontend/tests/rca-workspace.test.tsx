@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { RcaWorkspace } from "@/components/investigation/RcaWorkspace";
 import { fixtureResult } from "@/data/investigation-fixture";
+import { reviewSummary } from "@/lib/review";
 import { INSUFFICIENT_EVIDENCE, type RCAResult } from "@/lib/types";
 
 const success = fixtureResult("INC-011");
@@ -16,7 +17,7 @@ describe("RCA workspace", () => {
     render(<RcaWorkspace result={success} />);
     expect(screen.getByRole("heading", { level: 1, name: "INC-011" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Database connection pool exhaustion" })).toBeInTheDocument();
-    expect(screen.getByText(success.summary)).toBeInTheDocument();
+    expect(screen.getAllByText(success.summary).length).toBeGreaterThan(0);
     expect(screen.getByText("0.72")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Why this conclusion" })).toBeInTheDocument();
     expect(screen.getAllByText("ANOMWIN-000023").length).toBeGreaterThan(0);
@@ -53,7 +54,7 @@ describe("RCA workspace", () => {
     );
     expect(screen.getByText("No alternative causes were returned.")).toBeInTheDocument();
     expect(screen.getByText("No contradicting evidence was returned.")).toBeInTheDocument();
-    expect(screen.getByText(success.supporting_evidence[0].short_description)).toBeInTheDocument();
+    expect(screen.getAllByText(success.supporting_evidence[0].short_description).length).toBeGreaterThan(0);
   });
 
   it("renders every item in a long evidence list and a long hypothesis", () => {
@@ -78,5 +79,26 @@ describe("RCA workspace", () => {
     expect(screen.getByText("LOG-000024")).toBeInTheDocument();
     expect(screen.getByText("Observed log 24")).toBeInTheDocument();
     expect(screen.queryByText(/UTC/)).not.toBeInTheDocument();
+  });
+
+  it("builds the review sheet and actions only from the returned result", () => {
+    render(<RcaWorkspace result={success} />);
+    const review = reviewSummary(success);
+    const sheet = screen.getByTestId("operational-summary");
+    expect(screen.getByLabelText("Investigation output")).toHaveTextContent("Investigation");
+    expect(screen.getByLabelText("Investigation output")).toHaveTextContent("Findings");
+    expect(screen.getByLabelText("Investigation output")).toHaveTextContent("Evidence");
+    expect(screen.getByLabelText("Investigation output")).toHaveTextContent("Actions");
+    expect(sheet).toHaveTextContent(review.rootCause);
+    expect(sheet).toHaveTextContent(String(review.supportingCount));
+    expect(sheet).toHaveTextContent(String(review.contradictingCount));
+    expect(sheet).toHaveTextContent(String(review.historicalCount));
+    expect(sheet).toHaveTextContent(String(review.technicalCount));
+    expect(sheet).toHaveTextContent(String(review.actionCount));
+    expect(sheet).toHaveTextContent(review.alternatives[0]);
+    expect(screen.getByRole("heading", { name: success.recommended_actions[0].action })).toBeInTheDocument();
+    expect(screen.getAllByText(success.supporting_evidence[0].short_description).length).toBeGreaterThan(1);
+    expect(screen.queryByRole("button", { name: /fix|remediat|slack|jira|pagerduty/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/priority/i)).not.toBeInTheDocument();
   });
 });

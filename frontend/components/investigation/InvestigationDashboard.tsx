@@ -35,7 +35,11 @@ export function InvestigationDashboard({ view }: { view: InvestigationView }) {
           <Timeline events={view.timeline} activeId={activeId} onSelect={focusEvidence} />
           <MetricsPanel series={view.metrics} demo={view.source === "fixture"} />
           <AlternativeCauses causes={view.rca.alternative_causes} evidence={[...view.rca.supporting_evidence, ...view.rca.contradicting_evidence]} onSelect={focusEvidence} />
-          <RecommendedActions actions={view.rca.recommended_actions} onSelect={focusEvidence} />
+          <RecommendedActions
+            actions={view.rca.recommended_actions}
+            evidence={[...view.rca.supporting_evidence, ...view.rca.contradicting_evidence]}
+            onSelect={focusEvidence}
+          />
         </div>
         <aside className="secondary" aria-label="Evidence and references">
           <EvidenceList items={view.rca.supporting_evidence} timeline={view.rca.timeline} activeId={activeId} onSelect={focusEvidence} />
