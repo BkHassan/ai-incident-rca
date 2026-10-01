@@ -13,9 +13,10 @@ export function evidenceSourceLabel(source: EvidenceSource): string {
 }
 
 export function formatTimestamp(value: string): string {
-  if (!value) return "—";
-  const parsed = value.replace("T", " ");
-  return parsed.length > 19 ? parsed.slice(0, 19) : parsed;
+  if (!value.trim()) return "—";
+  const normalized = value.replace("T", " ").replace(/\.\d+/, "").replace(/Z$/, "").trim();
+  const shown = normalized.length > 19 ? normalized.slice(0, 19) : normalized;
+  return `${shown} UTC`;
 }
 
 export function formatScore(value: number): string {

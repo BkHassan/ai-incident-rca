@@ -105,7 +105,8 @@ describe("investigation workflow", () => {
   it("shows a network failure", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     render(<InvestigationWorkspace incidentId="INC-011" autostart />);
-    expect(await screen.findByRole("alert")).toHaveTextContent("could not be reached");
+    const alerts = await screen.findAllByRole("alert");
+    expect(alerts.some((node) => /could not be reached/i.test(node.textContent ?? ""))).toBe(true);
   });
 
   it("rejects a malformed result", async () => {

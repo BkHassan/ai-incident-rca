@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { InvestigationWorkspace } from "@/components/investigation/InvestigationWorkspace";
-import { EmptyState } from "@/components/ui/Section";
-import { Body, Kicker, Meta, PageTitle } from "@/components/ui/Type";
+import { StatePanel } from "@/components/ui/StatePanel";
+import { Body, Kicker, PageTitle } from "@/components/ui/Type";
 
 export function InvestigationsContent({
   incidentId,
@@ -18,14 +18,16 @@ export function InvestigationsContent({
           <PageTitle>Investigation</PageTitle>
           <Body>Choose an incident, then start one POST /api/incidents/investigate call.</Body>
         </header>
-        <EmptyState title="Select an incident first">
-          Investigations are opened from an incident in the catalog.
-        </EmptyState>
-        <Meta>
-          <Link className="text-link" href="/incidents">
-            Back to incidents
-          </Link>
-        </Meta>
+        <StatePanel
+          title="No incident selected"
+          happened="An investigation needs an incident id. None is selected."
+          next="Open the catalog and choose an incident."
+          actions={
+            <Link className="primary-action" href="/incidents">
+              Open incidents
+            </Link>
+          }
+        />
       </div>
     );
   }

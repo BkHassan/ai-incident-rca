@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { CopyId } from "@/components/ui/CopyId";
 import { Section } from "@/components/ui/Section";
-import { Body, Meta } from "@/components/ui/Type";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { StatePanel } from "@/components/ui/StatePanel";
+import { Meta } from "@/components/ui/Type";
 import { formatScore } from "@/lib/format";
 import type { HistoricalHit, RetrievalOrigin, RetrievalPayload, TechnicalHit } from "@/lib/retrieval";
 import { previewText } from "@/lib/retrieval";
@@ -12,11 +15,13 @@ export function RetrievalContext({
   origin,
   payload,
   error,
+  onRetry,
 }: {
   incidentId: string;
   origin: RetrievalOrigin | "loading" | "error";
   payload: RetrievalPayload | null;
   error: string | null;
+  onRetry?: () => void;
 }) {
   return (
     <div className="stack">
@@ -43,8 +48,22 @@ export function RetrievalContext({
           Fixture / dev data. These records were not retrieved from the index.
         </p>
       ) : null}
-      {origin === "loading" ? <Meta>Loading retrieval results.</Meta> : null}
-      {origin === "error" ? <p className="meta">{error}</p> : null}
+      {origin === "loading" ? <Skeleton label="Loading retrieval" lines={3} /> : null}
+      {origin === "error" ? (
+        <StatePanel
+          title="Backend unavailable"
+          happened={error ?? "Retrieval did not return."}
+          next="Retry retrieval. Starting an investigation is a separate request."
+          alert
+          actions={
+            onRetry ? (
+              <button type="button" className="primary-action" onClick={onRetry}>
+                Retry retrieval
+              </button>
+            ) : null
+          }
+        />
+      ) : null}
       {payload ? (
         <>
           <Meta>Observational query: {payload.query}</Meta>
@@ -61,7 +80,11 @@ function HistoricalIncidents({ items }: { items: HistoricalHit[] }) {
     <Section id="similar-historical" title="Similar historical incidents">
       <Meta>Historical knowledge. A past incident is background for this investigation. Its recorded cause is not the cause of the current incident.</Meta>
       {items.length === 0 ? (
-        <Body>No historical incident was retrieved.</Body>
+        <StatePanel
+          title="No historical matches"
+          happened="Retrieval returned no prior incidents for this query."
+          next="Continue with the observed evidence. A historical match is not required to investigate."
+        />
       ) : (
         <div className="stack">
           {items.map((item) => (
@@ -80,6 +103,7 @@ function HistoricalCard({ item }: { item: HistoricalHit }) {
     <article className="fact-block">
       <p className="kind kind-fact">Historical</p>
       <h3 className="mono">{item.incident_id}</h3>
+      <CopyId id={item.incident_id} />
       <p className="meta">
         Rank {item.rank} · cosine similarity {formatScore(item.score)}
         {context ? ` · ${context}` : ""}
@@ -109,7 +133,11 @@ function TechnicalKnowledge({ items }: { items: TechnicalHit[] }) {
     <Section id="technical-knowledge" title="Technical knowledge">
       <Meta>Retrieved document chunks. They describe mechanisms. They are not observations from this incident.</Meta>
       {items.length === 0 ? (
-        <Body>No technical document was retrieved.</Body>
+        <StatePanel
+          title="No technical-document matches"
+          happened="Retrieval returned no document chunks for this query."
+          next="Continue with the logs, metrics, and anomalies from this incident."
+        />
       ) : (
         <div className="stack">
           {items.map((item) => (

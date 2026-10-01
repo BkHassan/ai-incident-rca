@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, Section } from "@/components/ui/Section";
 import { Badge } from "@/components/ui/Badge";
 import { Body, Kicker, Meta, PageTitle } from "@/components/ui/Type";
-import { hrefWithIncident } from "@/lib/product";
+import { hrefWithIncident, investigationHref } from "@/lib/product";
 
 const returnedFields = [
   "Summary",
@@ -27,14 +27,30 @@ export function OverviewContent({ incidentId }: { incidentId: string | null }) {
           sends one request and shows the RCA result that comes back.
         </Body>
       </header>
-      <Card>
-        <Kicker>Next step</Kicker>
-        <p className="card-title">Incidents</p>
-        <Body>The catalog is the operational entry. Choose an incident, then open it before starting an investigation.</Body>
-        <Link className="text-link" href={hrefWithIncident("/incidents", incidentId)}>
-          Open incidents
-        </Link>
-      </Card>
+      {incidentId ? (
+        <Card>
+          <Kicker>Incident selected</Kicker>
+          <p className="card-title mono">{incidentId}</p>
+          <Body>This incident is selected. Open its record, then start an investigation when you are ready.</Body>
+          <div className="action-row">
+            <Link className="text-link" href={`/incidents/${incidentId}`}>
+              Open {incidentId}
+            </Link>
+            <Link className="text-link" href={investigationHref(incidentId)}>
+              Investigate {incidentId}
+            </Link>
+          </div>
+        </Card>
+      ) : (
+        <Card>
+          <Kicker>No incident selected</Kicker>
+          <p className="card-title">Incidents</p>
+          <Body>The catalog is the operational entry. Choose an incident, then open it before starting an investigation.</Body>
+          <Link className="text-link" href={hrefWithIncident("/incidents", incidentId)}>
+            Open incidents
+          </Link>
+        </Card>
+      )}
       <Section id="returns" title="What a completed investigation returns">
         <Body>
           When POST /api/incidents/investigate succeeds, the body is one RCA result. These are fields of that

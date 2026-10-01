@@ -1,3 +1,4 @@
+import { CopyId } from "@/components/ui/CopyId";
 import { evidenceSourceLabel, formatTimestamp } from "@/lib/format";
 import type { EvidenceReference, TimelineEntry } from "@/lib/types";
 
@@ -38,9 +39,10 @@ export function EvidenceItem({
         ) : (
           <span className="mono">{item.evidence_id}</span>
         )}
+        <CopyId id={item.evidence_id} />
       </p>
       <p>Source {evidenceSourceLabel(item.source_type)}</p>
-      {timestamp ? <p className="mono">{formatTimestamp(timestamp)} UTC</p> : null}
+      {timestamp ? <p className="mono">{formatTimestamp(timestamp)}</p> : null}
       <p className="cause-text">{item.short_description}</p>
       <p className="meta">{relationship}</p>
     </article>

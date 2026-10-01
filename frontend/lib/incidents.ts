@@ -90,7 +90,10 @@ const groundTruthKeys = [
 ];
 
 export function formatTimestamp(value: string): string {
-  return `${value.replace("T", " ")} UTC`;
+  if (!value.trim()) return "—";
+  const normalized = value.replace("T", " ").replace(/\.\d+/, "").replace(/Z$/, "").trim();
+  const shown = normalized.length > 19 ? normalized.slice(0, 19) : normalized;
+  return `${shown} UTC`;
 }
 
 export function formatDuration(minutes: number): string {

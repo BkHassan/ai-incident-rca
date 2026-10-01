@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { CopyId } from "@/components/ui/CopyId";
 import { Section } from "@/components/ui/Section";
+import { StatePanel } from "@/components/ui/StatePanel";
 import { Body, Meta } from "@/components/ui/Type";
 import {
   formatDuration,
@@ -73,7 +75,22 @@ export function EvidenceTimeline({
   if (!available) {
     return (
       <Section id="evidence-timeline" title="What happened before and during this incident">
-        <Body>No derived timeline is available for this incident.</Body>
+        <StatePanel
+          title="Empty timeline"
+          happened="No derived timeline file is available for this incident."
+          next="Use the alert metadata and log counts above, then investigate."
+        />
+      </Section>
+    );
+  }
+  if (items.length === 0) {
+    return (
+      <Section id="evidence-timeline" title="What happened before and during this incident">
+        <StatePanel
+          title="Empty timeline"
+          happened="Correlation did not keep any evidence items for this incident."
+          next="Detector windows above, when present, are still the anomaly clusters. You can still investigate."
+        />
       </Section>
     );
   }
@@ -162,6 +179,7 @@ function EvidenceContext({
     <aside className="evidence-context" aria-live="polite">
       <p className="type-label">{categoryLabel[category]}</p>
       <p className="mono">{item.evidence_id}</p>
+      <CopyId id={item.evidence_id} />
       <p>{item.summary || item.title}</p>
       <dl className="meta-list">
         <div>

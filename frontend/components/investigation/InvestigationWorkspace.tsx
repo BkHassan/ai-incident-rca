@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { RcaWorkspace } from "@/components/investigation/RcaWorkspace";
 import { RetrievalContext } from "@/components/investigation/RetrievalContext";
-import { EmptyState } from "@/components/ui/Section";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { StatePanel } from "@/components/ui/StatePanel";
 import { Body, Kicker, Meta, PageTitle } from "@/components/ui/Type";
 import { InvestigationClientError, runInvestigation } from "@/lib/api/investigation";
 import { loadRetrieval, RetrievalClientError } from "@/lib/api/retrieval";
 import type { RetrievalOrigin, RetrievalPayload } from "@/lib/retrieval";
-import type { RCAResult } from "@/lib/types";
+import { INSUFFICIENT_EVIDENCE, type RCAResult } from "@/lib/types";
 
 type Phase =
   | { phase: "idle" }
@@ -39,6 +40,7 @@ export function InvestigationWorkspace({
     payload: RetrievalPayload | null;
     error: string | null;
   }>({ origin: "loading", payload: null, error: null });
+  const [retrievalAttempt, setRetrievalAttempt] = useState(0);
   const started = useRef(false);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export function InvestigationWorkspace({
     return () => {
       cancelled = true;
     };
-  }, [incidentId]);
+  }, [incidentId, retrievalAttempt]);
 
   function investigate() {
     setPhase({ phase: "investigating" });
@@ -84,24 +86,26 @@ export function InvestigationWorkspace({
       <header className="page-head">
         <Kicker>Investigations</Kicker>
         <PageTitle>{incidentId}</PageTitle>
-        {phase.phase === "idle" ? (
-          <Body>
-            One POST /api/incidents/investigate call returns the result. The request has not been sent.
-          </Body>
-        ) : null}
       </header>
+      <InvestigationStatus incidentId={incidentId} phase={phase} retrievalFailed={retrieval.origin === "error"} />
       <RetrievalContext
         incidentId={incidentId}
         origin={retrieval.origin}
         payload={retrieval.payload}
         error={retrieval.error}
+        onRetry={() => setRetrievalAttempt((value) => value + 1)}
       />
       {phase.phase === "idle" ? (
         <button type="button" className="primary-action investigate-cta" onClick={investigate}>
           Investigate incident
         </button>
       ) : null}
-      {phase.phase === "investigating" ? <Investigating incidentId={incidentId} /> : null}
+      {phase.phase === "investigating" ? (
+        <>
+          <Skeleton label="Investigation running" lines={5} />
+          <Investigating incidentId={incidentId} />
+        </>
+      ) : null}
       {phase.phase === "error" ? (
         <InvestigationFailure status={phase.status} message={phase.message} onRetry={investigate} />
       ) : null}
@@ -112,6 +116,57 @@ export function InvestigationWorkspace({
         </Link>
       </Meta>
     </div>
+  );
+}
+
+function InvestigationStatus({
+  incidentId,
+  phase,
+  retrievalFailed,
+}: {
+  incidentId: string;
+  phase: Phase;
+  retrievalFailed: boolean;
+}) {
+  const insufficient = phase.phase === "result" && phase.result.root_cause.cause === INSUFFICIENT_EVIDENCE;
+  const partial = phase.phase === "result" && retrievalFailed;
+  let label = "Investigation ready";
+  let happened = `The investigation request for ${incidentId} has not been sent.`;
+  let next = "Read the retrieval context, then investigate this incident.";
+  if (phase.phase === "investigating") {
+    label = "Investigation running";
+    happened = `One request for ${incidentId} is in progress. The service does not report intermediate stages.`;
+    next = "Stay on this page until a result or a failure returns.";
+  } else if (phase.phase === "error") {
+    const backend = phase.status === 503 || phase.status === 0;
+    return (
+      <section
+        className="section"
+        aria-label="Investigation status"
+        data-investigation-status={backend ? "Backend unavailable" : "Investigation failed"}
+      >
+        {backend ? <p className="kicker">Backend unavailable</p> : null}
+      </section>
+    );
+  } else if (insufficient) {
+    label = "Insufficient evidence";
+    happened = "The result returned and did not name a cause.";
+    next = "Read the recommended actions. They describe what to collect next.";
+  } else if (partial) {
+    label = "Partial result";
+    happened = "The hypothesis returned. Retrieval did not.";
+    next = "Read the findings below, then retry retrieval.";
+  } else if (phase.phase === "result") {
+    label = "Investigation succeeded";
+    happened = "Findings are the model hypothesis. Evidence rows are observed facts. Actions are recommendations.";
+    next = "Read findings, then evidence, then actions. Nothing on this page is executed.";
+  }
+  return (
+    <section className="section" aria-label="Investigation status" data-investigation-status={label}>
+      <p className="kicker">{label}</p>
+      <Body>{happened}</Body>
+      <Meta>Next: {next}</Meta>
+    </section>
   );
 }
 
@@ -158,14 +213,26 @@ function InvestigationFailure({
             : status === 200
               ? "Response was not an RCA result"
               : "Could not reach the service";
+  const backend = status === 503 || status === 0;
+  const next =
+    status === 404
+      ? "Return to the catalog and choose an incident that exists."
+      : status === 422
+        ? "Open an incident from the catalog. Ids look like INC-011."
+        : backend
+          ? "Retry after the service is reachable, or go back to the incident."
+          : "Retry the investigation. The previous request did not return a usable result.";
   return (
-    <div className="stack">
-      <EmptyState title={title}>
-        <span role="alert">{message}</span>
-      </EmptyState>
-      <button type="button" className="primary-action" onClick={onRetry}>
-        Try again
-      </button>
-    </div>
+    <StatePanel
+      title={title}
+      happened={message}
+      next={next}
+      alert
+      actions={
+        <button type="button" className="primary-action" onClick={onRetry}>
+          Try again
+        </button>
+      }
+    />
   );
 }

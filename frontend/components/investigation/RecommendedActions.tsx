@@ -1,3 +1,4 @@
+import { CopyId } from "@/components/ui/CopyId";
 import type { EvidenceReference, RecommendedAction } from "@/lib/types";
 
 export function RecommendedActions({
@@ -38,6 +39,7 @@ export function RecommendedActions({
                         ) : (
                           <span className="mono">{id}</span>
                         )}
+                        <CopyId id={id} />
                         {cited ? <span> {cited.short_description}</span> : null}
                       </li>
                     );
