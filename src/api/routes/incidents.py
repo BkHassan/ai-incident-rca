@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Request
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Path, Request
 
 from investigation import InvestigationService, RCAResult
 
-from ..schemas import InvestigateRequest
+from ..catalog import list_catalog, read_catalog_incident
+from ..schemas import IncidentDetail, IncidentListResponse, InvestigateRequest
 
 router = APIRouter()
 
@@ -20,6 +23,19 @@ def get_service(request: Request) -> InvestigationService:
     service = build_default_service(load_env=request.app.state.load_env)
     request.app.state.service = service
     return service
+
+
+@router.get("/api/incidents", response_model=IncidentListResponse)
+def list_incidents(request: Request) -> IncidentListResponse:
+    return list_catalog(request.app.state.data_dir)
+
+
+@router.get("/api/incidents/{incident_id}", response_model=IncidentDetail)
+def read_incident(
+    incident_id: Annotated[str, Path(pattern=r"^INC-\d{3}$")],
+    request: Request,
+) -> IncidentDetail:
+    return read_catalog_incident(incident_id, request.app.state.data_dir)
 
 
 @router.post("/api/incidents/investigate", response_model=RCAResult)

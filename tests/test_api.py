@@ -174,5 +174,59 @@ class ApiTests(unittest.TestCase):
         self.assertNotRegex(response.text, r"AQ\.[A-Za-z0-9_\-]+")
 
 
+class CatalogApiTests(unittest.TestCase):
+    def test_list_uses_context_fields_only(self):
+        response = TestClient(create_app(load_env=False)).get("/api/incidents")
+        self.assertEqual(response.status_code, 200, response.text)
+        body = response.json()
+        self.assertGreaterEqual(len(body["incidents"]), 35)
+        incident = next(item for item in body["incidents"] if item["incident_id"] == "INC-011")
+        self.assertEqual(incident["service"], "payment-api")
+        self.assertEqual(incident["severity"], "HIGH")
+        self.assertEqual(incident["title"], "payment-api error-rate SLO burn")
+        self.assertNotIn("scenario", incident)
+        self._assert_no_ground_truth(response.text)
+
+    def test_detail_separates_metadata_and_evidence(self):
+        response = TestClient(create_app(load_env=False)).get("/api/incidents/INC-011")
+        self.assertEqual(response.status_code, 200, response.text)
+        body = response.json()
+        self.assertEqual(body["incident_id"], "INC-011")
+        self.assertIn("description", body)
+        self.assertGreater(body["logs"]["line_count"], 0)
+        self.assertTrue(body["anomalies_available"])
+        self.assertGreater(len(body["anomaly_windows"]), 0)
+        self.assertTrue(body["timeline_available"])
+        self.assertGreater(len(body["timeline"]), 0)
+        self.assertNotIn("description", body["timeline"][0])
+        self._assert_no_ground_truth(response.text)
+
+    def test_unknown_catalog_incident(self):
+        response = TestClient(create_app(load_env=False)).get("/api/incidents/INC-099")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["error"], "not_found")
+
+    def test_malformed_catalog_incident(self):
+        response = TestClient(create_app(load_env=False)).get("/api/incidents/not-an-id")
+        self.assertEqual(response.status_code, 422)
+
+    def _assert_no_ground_truth(self, text: str):
+        from ingestion import incident_path, load_ground_truth
+
+        truth = load_ground_truth(incident_path("INC-011", DATA))
+        for key in (
+            "scenario", "true_root_cause", "root_cause_service", "root_cause_variant",
+            "root_cause_detail", "fault_start_time", "expected_symptoms", "affected_services",
+            "resolution",
+        ):
+            self.assertNotRegex(text, rf'"{key}"\s*:')
+        self.assertNotIn(truth.root_cause_detail, text)
+        self.assertNotIn(truth.resolution, text)
+        self.assertNotIn(truth.scenario, text)
+        self.assertNotIn(truth.root_cause_variant, text)
+        for symptom in truth.expected_symptoms:
+            self.assertNotIn(symptom, text)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -5,7 +5,6 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 import { OverviewContent } from "@/components/pages/OverviewContent";
-import { IncidentsContent } from "@/components/pages/IncidentsContent";
 import { InvestigationsContent } from "@/components/pages/InvestigationsContent";
 import { KnowledgeContent } from "@/components/pages/KnowledgeContent";
 import { Sidebar } from "@/components/shell/Sidebar";
@@ -32,13 +31,6 @@ describe("product shell", () => {
     render(<OverviewContent incidentId={null} />);
     expect(screen.getByRole("link", { name: "Open incidents" })).toHaveAttribute("href", "/incidents");
     expect(screen.queryByText(/uptime|revenue|users online|% of incidents/i)).not.toBeInTheDocument();
-  });
-
-  it("does not invent an incident record", () => {
-    render(<IncidentsContent incidentId="INC-011" />);
-    expect(screen.getByText("INC-011")).toBeInTheDocument();
-    expect(screen.getByText(/does not read the incident file/i)).toBeInTheDocument();
-    expect(screen.queryByText(/HIGH|payment-api|root cause/i)).not.toBeInTheDocument();
   });
 
   it("does not render an investigation result", () => {

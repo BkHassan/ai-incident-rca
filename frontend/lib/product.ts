@@ -22,7 +22,7 @@ export const navigation = [
   {
     href: "/incidents",
     label: "Incidents",
-    description: "Choose an incident id",
+    description: "Browse the incident catalog",
   },
   {
     href: "/investigations",
@@ -49,3 +49,20 @@ export function hrefWithIncident(href: string, incidentId: string | null): strin
   if (!incidentId) return href;
   return `${href}?incident=${incidentId}`;
 }
+
+export function incidentIdFromPath(pathname: string): string | null {
+  const match = /^\/incidents\/(INC-\d{3})$/.exec(pathname);
+  return match?.[1] ?? null;
+}
+
+export function isNavActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function sectionForPath(pathname: string): string {
+  const match = navigation.find((item) => isNavActive(pathname, item.href));
+  return match?.label ?? product.name;
+}
+
+export const catalogNote = "Catalog: GET /api/incidents";

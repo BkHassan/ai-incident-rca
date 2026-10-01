@@ -4,7 +4,7 @@ import { Suspense, useState, type ReactNode } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { TopBar } from "@/components/shell/TopBar";
-import { navigation, parseIncidentId } from "@/lib/product";
+import { incidentIdFromPath, parseIncidentId, sectionForPath } from "@/lib/product";
 
 function ShellFrame({
   children,
@@ -21,7 +21,7 @@ function ShellFrame({
   onMenu: () => void;
   onNavigate: () => void;
 }) {
-  const section = navigation.find((item) => item.href === pathname)?.label ?? "Incident RCA";
+  const section = sectionForPath(pathname);
 
   return (
     <>
@@ -57,7 +57,8 @@ function ShellWithParams({
 }) {
   const pathname = usePathname();
   const params = useSearchParams();
-  const incidentId = parseIncidentId(params.get("incident") ?? undefined);
+  const incidentId =
+    incidentIdFromPath(pathname) ?? parseIncidentId(params.get("incident") ?? undefined);
 
   return (
     <ShellFrame
@@ -84,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         fallback={
           <ShellFrame
             pathname={pathname}
-            incidentId={null}
+            incidentId={incidentIdFromPath(pathname)}
             menuOpen={menuOpen}
             onMenu={toggle}
             onNavigate={close}

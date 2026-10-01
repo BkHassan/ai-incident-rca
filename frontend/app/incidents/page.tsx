@@ -1,11 +1,5 @@
-import { IncidentsContent } from "@/components/pages/IncidentsContent";
-import { parseIncidentId } from "@/lib/product";
+import { IncidentExplorer } from "@/components/incidents/IncidentExplorer";
 
-export default async function IncidentsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ incident?: string }>;
-}) {
-  const { incident } = await searchParams;
-  return <IncidentsContent incidentId={parseIncidentId(incident)} />;
+export default function IncidentsPage() {
+  return <IncidentExplorer />;
 }

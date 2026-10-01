@@ -30,7 +30,7 @@ export function OverviewContent({ incidentId }: { incidentId: string | null }) {
       <Card>
         <Kicker>Next step</Kicker>
         <p className="card-title">Incidents</p>
-        <Body>The incident id is the operational entry point. The API does not yet list incidents.</Body>
+        <Body>The catalog is the operational entry. Choose an incident, then open it before starting an investigation.</Body>
         <Link className="text-link" href={hrefWithIncident("/incidents", incidentId)}>
           Open incidents
         </Link>
@@ -50,10 +50,11 @@ export function OverviewContent({ incidentId }: { incidentId: string | null }) {
       <Section id="unavailable" title="Not available from the API">
         <ul className="plain-list">
           <li>
-            <Badge tone="neutral">No route</Badge> Incident catalog, title, severity, and alerting service
+            <Badge tone="neutral">Catalog</Badge> Titles, alert severity, and the alerting service are on Incidents
           </li>
           <li>
-            <Badge tone="neutral">No route</Badge> Logs, metric series, and anomaly charts
+            <Badge tone="neutral">Evidence</Badge> Log counts, metric series names, detector windows, and the
+            observational timeline are on the incident page. Charts are not.
           </li>
           <li>
             <Badge tone="neutral">No route</Badge> Knowledge document browser

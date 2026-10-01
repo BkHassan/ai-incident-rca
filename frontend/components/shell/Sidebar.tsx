@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { hrefWithIncident, navigation, product } from "@/lib/product";
+import { catalogNote, hrefWithIncident, isNavActive, navigation, product } from "@/lib/product";
 
 export function Sidebar({
   currentPath,
@@ -24,7 +24,7 @@ export function Sidebar({
       <nav aria-label="Primary">
         <ul className="nav-list">
           {navigation.map((item) => {
-            const active = currentPath === item.href;
+            const active = isNavActive(currentPath, item.href);
             return (
               <li key={item.href}>
                 <Link
@@ -40,7 +40,7 @@ export function Sidebar({
           })}
         </ul>
       </nav>
-      <p className="sidebar-foot">One HTTP route: POST /api/incidents/investigate</p>
+      <p className="sidebar-foot">{catalogNote}</p>
     </div>
   );
 }

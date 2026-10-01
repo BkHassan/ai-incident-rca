@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/Section";
 import { Body, Kicker, Meta, PageTitle } from "@/components/ui/Type";
-import { hrefWithIncident } from "@/lib/product";
 
 export function InvestigationsContent({ incidentId }: { incidentId: string | null }) {
   return (
@@ -15,18 +14,18 @@ export function InvestigationsContent({ incidentId }: { incidentId: string | nul
         </Body>
       </header>
       {incidentId ? (
-        <EmptyState title="Not built in this step">
-          {incidentId} is selected. The result view, evidence, timeline, and actions are the next feature. They
-          are not shown here.
+        <EmptyState title="Result not shown">
+          {incidentId} is selected. This page does not call the investigation API and does not show an AI result.
+          Alert metadata and observed evidence stay on the incident page.
         </EmptyState>
       ) : (
         <EmptyState title="Select an incident first">
-          Investigations are opened from an incident id.
+          Investigations are opened from an incident in the catalog.
         </EmptyState>
       )}
       <Meta>
-        <Link className="text-link" href={hrefWithIncident("/incidents", incidentId)}>
-          Back to incidents
+        <Link className="text-link" href={incidentId ? `/incidents/${incidentId}` : "/incidents"}>
+          {incidentId ? `Back to ${incidentId}` : "Back to incidents"}
         </Link>
       </Meta>
     </div>
