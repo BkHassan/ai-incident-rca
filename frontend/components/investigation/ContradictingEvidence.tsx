@@ -1,7 +1,7 @@
 import { EvidenceItem, timestampFor } from "@/components/investigation/EvidenceItem";
 import type { EvidenceReference, TimelineEntry } from "@/lib/types";
 
-export function EvidenceList({
+export function ContradictingEvidence({
   items,
   timeline,
   activeId = null,
@@ -13,11 +13,11 @@ export function EvidenceList({
   onSelect?: (evidenceId: string) => void;
 }) {
   return (
-    <section aria-labelledby="why-heading" data-testid="evidence-list">
-      <h2 id="why-heading">Why this conclusion</h2>
-      <p className="meta">Supporting evidence cited on the result. Descriptions are the cited observations, not a new explanation.</p>
+    <section aria-labelledby="contradicting-heading" data-testid="contradicting">
+      <h2 id="contradicting-heading">Contradicting evidence</h2>
+      <p className="meta">Observations the result cites against the hypothesis.</p>
       {items.length === 0 ? (
-        <p>No supporting evidence was returned.</p>
+        <p>No contradicting evidence was returned.</p>
       ) : (
         <div className="stack">
           {items.map((item) => (
@@ -25,9 +25,10 @@ export function EvidenceList({
               key={item.evidence_id}
               item={item}
               timestamp={timestampFor(timeline, item.evidence_id)}
-              relationship="Supports the hypothesis"
+              relationship="Contradicts the hypothesis"
               active={item.evidence_id === activeId}
               onSelect={onSelect}
+              domId={`evidence-${item.evidence_id}-against`}
             />
           ))}
         </div>

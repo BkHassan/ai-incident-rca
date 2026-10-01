@@ -1,70 +1,19 @@
 import { formatScore } from "@/lib/format";
-import type { RCAResult } from "@/lib/types";
-import { isInsufficient } from "@/lib/view";
+import { INSUFFICIENT_EVIDENCE, type RCAResult } from "@/lib/types";
 
-export function RootCauseCard({
-  rca,
-  onSelect,
-}: {
-  rca: RCAResult;
-  onSelect: (evidenceId: string) => void;
-}) {
-  if (isInsufficient(rca)) {
-    return (
-      <section className="panel root-cause insufficient" aria-labelledby="cause-heading" data-testid="root-cause">
-        <p className="kicker">Investigation result</p>
-        <h2 id="cause-heading" data-testid="insufficient">
-          Insufficient evidence
-        </h2>
-        <p>{rca.root_cause.rationale}</p>
-        <p className="score-note">
-          Investigation confidence <span className="mono">{formatScore(rca.confidence)}</span>. Uncalibrated score
-          from 0 to 1. Not a probability.
-        </p>
-      </section>
-    );
-  }
-
+export function RootCauseCard({ result }: { result: RCAResult }) {
+  const insufficient = result.root_cause.cause === INSUFFICIENT_EVIDENCE;
   return (
-    <section className="panel root-cause" aria-labelledby="cause-heading" data-testid="root-cause">
-      <p className="kicker">Root cause hypothesis</p>
-      <h2 id="cause-heading">{rca.root_cause.cause}</h2>
-      <p className="score">
-        <span className="score-value mono">{formatScore(rca.confidence)}</span>
-        <span>
-          Investigation confidence
-          <small>Uncalibrated score from 0 to 1. Not a probability.</small>
-        </span>
+    <section className="hypothesis-block" aria-labelledby="cause-heading" data-kind="model-hypothesis" data-testid="root-cause">
+      <p className="kind kind-hypothesis">Model hypothesis</p>
+      <h2 id="cause-heading" data-testid={insufficient ? "insufficient" : undefined}>
+        {insufficient ? "Insufficient evidence" : result.root_cause.cause}
+      </h2>
+      <p className="cause-text">{result.summary}</p>
+      <p>
+        Uncalibrated score <span className="mono">{formatScore(result.confidence)}</span>. Not a probability.
       </p>
-      <p>{rca.root_cause.rationale}</p>
-      <EvidenceIdList label="Supported by" ids={rca.root_cause.supporting_evidence_ids} onSelect={onSelect} />
-      <EvidenceIdList label="Cut against by" ids={rca.root_cause.contradicting_evidence_ids} onSelect={onSelect} />
+      <p className="cause-text">{result.root_cause.rationale}</p>
     </section>
-  );
-}
-
-function EvidenceIdList({
-  label,
-  ids,
-  onSelect,
-}: {
-  label: string;
-  ids: string[];
-  onSelect: (evidenceId: string) => void;
-}) {
-  if (ids.length === 0) return null;
-  return (
-    <div className="id-row">
-      <h3>{label}</h3>
-      <ul>
-        {ids.map((id) => (
-          <li key={id}>
-            <button type="button" className="text-button mono" onClick={() => onSelect(id)}>
-              {id}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

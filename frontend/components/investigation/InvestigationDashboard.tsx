@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AlternativeCauses } from "@/components/investigation/AlternativeCauses";
+import { ContradictingEvidence } from "@/components/investigation/ContradictingEvidence";
 import { EvidenceList } from "@/components/investigation/EvidenceList";
 import { IncidentHeader } from "@/components/investigation/IncidentHeader";
 import { InvestigationSummary } from "@/components/investigation/InvestigationSummary";
@@ -18,7 +19,10 @@ export function InvestigationDashboard({ view }: { view: InvestigationView }) {
 
   function focusEvidence(evidenceId: string) {
     setActiveId(evidenceId);
-    document.getElementById(`evidence-${evidenceId}`)?.scrollIntoView?.({ block: "nearest" });
+    const node =
+      document.getElementById(`evidence-${evidenceId}`) ??
+      document.getElementById(`evidence-${evidenceId}-against`);
+    node?.scrollIntoView?.({ block: "nearest" });
   }
 
   return (
@@ -27,15 +31,16 @@ export function InvestigationDashboard({ view }: { view: InvestigationView }) {
       <div className="layout">
         <div className="primary">
           <InvestigationSummary summary={view.rca.summary} />
-          <RootCauseCard rca={view.rca} onSelect={focusEvidence} />
+          <RootCauseCard result={view.rca} />
           <Timeline events={view.timeline} activeId={activeId} onSelect={focusEvidence} />
           <MetricsPanel series={view.metrics} demo={view.source === "fixture"} />
-          <AlternativeCauses causes={view.rca.alternative_causes} onSelect={focusEvidence} />
+          <AlternativeCauses causes={view.rca.alternative_causes} evidence={[...view.rca.supporting_evidence, ...view.rca.contradicting_evidence]} onSelect={focusEvidence} />
           <RecommendedActions actions={view.rca.recommended_actions} onSelect={focusEvidence} />
         </div>
         <aside className="secondary" aria-label="Evidence and references">
-          <EvidenceList items={view.evidence} activeId={activeId} onSelect={focusEvidence} />
-          <SimilarIncidents items={view.historical} />
+          <EvidenceList items={view.rca.supporting_evidence} timeline={view.rca.timeline} activeId={activeId} onSelect={focusEvidence} />
+          <ContradictingEvidence items={view.rca.contradicting_evidence} timeline={view.rca.timeline} activeId={activeId} onSelect={focusEvidence} />
+          <SimilarIncidents items={view.rca.similar_incidents} />
           <TechnicalEvidence items={view.technical} />
         </aside>
       </div>

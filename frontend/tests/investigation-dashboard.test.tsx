@@ -26,7 +26,7 @@ describe("investigation dashboard", () => {
 
   it("renders key evidence and links a supporting id to that card", () => {
     render(<InvestigationScreen mode="result" view={view} />);
-    expect(screen.getByRole("heading", { name: "Key evidence" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Why this conclusion" })).toBeInTheDocument();
     fireEvent.click(screen.getAllByRole("button", { name: "ANOMWIN-000023" })[0]);
     expect(document.getElementById("evidence-ANOMWIN-000023")).toHaveAttribute("data-active", "true");
   });
@@ -43,7 +43,7 @@ describe("investigation dashboard", () => {
     expect(screen.getByRole("heading", { name: "Technical evidence" })).toBeInTheDocument();
     expect(screen.getByText(/knowledge\/docs\/database.md/)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Recommended actions" })).toBeInTheDocument();
-    expect(screen.getByText(/Nothing here runs a change/i)).toBeInTheDocument();
+    expect(screen.getByText(/nothing here is executed/i)).toBeInTheDocument();
   });
 
   it("renders the loading state as a demo preview", () => {
