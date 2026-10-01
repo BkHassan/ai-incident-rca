@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AnomalySummary, EvidenceTimeline } from "@/components/incidents/EvidenceTimeline";
 import { SeverityBadge } from "@/components/incidents/SeverityBadge";
 import { Section } from "@/components/ui/Section";
 import { Body, Kicker, Meta, PageTitle } from "@/components/ui/Type";
@@ -84,55 +85,19 @@ export function IncidentDetailView({ incident }: { incident: IncidentDetail }) {
           ))}
         </ul>
       </Section>
-      <Section id="detector-windows" title="Detector windows">
-        <Meta>Severity in this section is the detector label, not the alert severity. A window is a cluster of odd points, not a cause.</Meta>
-        {incident.anomalies_available ? (
-          incident.anomaly_windows.length === 0 ? (
-            <Body>The anomaly report has no windows.</Body>
-          ) : (
-            <ul className="evidence-list">
-              {incident.anomaly_windows.map((window) => (
-                <li key={`${window.start_time}-${window.peak_service}-${window.peak_metric}`}>
-                  <SeverityBadge severity={window.severity} />
-                  <span>
-                    {formatTimestamp(window.start_time)} – {formatTimestamp(window.end_time)} ·{" "}
-                    {formatDuration(window.duration_minutes)} · {window.anomaly_count} points · peak{" "}
-                    {window.peak_service}:{window.peak_metric}
-                    {window.peak_z_score === null ? "" : ` z ${window.peak_z_score}`}
-                  </span>
-                  <span className="meta">
-                    {window.services.join(", ")} · {window.metrics.join(", ")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )
-        ) : (
+      {incident.anomalies_available ? (
+        <AnomalySummary metrics={incident.anomaly_metrics ?? []} windows={incident.anomaly_windows} />
+      ) : (
+        <Section id="anomalies-detected" title="Anomalies detected">
           <Body>No derived anomaly report is available for this incident.</Body>
-        )}
-      </Section>
-      <Section id="observed-timeline" title="Observational timeline">
-        <Meta>Order is not causation. These rows are observed events, not an AI investigation result.</Meta>
-        {incident.timeline_available ? (
-          <>
-            <Meta>Services on the timeline: {incident.observed_services.join(", ") || "none"}</Meta>
-            <ol className="timeline-list">
-              {incident.timeline.map((event) => (
-                <li key={event.evidence_id}>
-                  <span className="mono">{event.evidence_id}</span>
-                  <span>{event.title}</span>
-                  <span className="meta">
-                    {formatTimestamp(event.timestamp)} · {event.service} · {event.source_type}
-                    {event.severity ? ` · ${event.severity}` : ""}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </>
-        ) : (
-          <Body>No derived timeline is available for this incident.</Body>
-        )}
-      </Section>
+        </Section>
+      )}
+      <EvidenceTimeline
+        start={incident.start_time}
+        end={incident.end_time}
+        items={incident.timeline}
+        available={incident.timeline_available}
+      />
     </div>
   );
 }

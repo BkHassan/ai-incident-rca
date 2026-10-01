@@ -80,14 +80,35 @@ class WindowEvidence(BaseModel):
 
 
 class TimelineEvidence(BaseModel):
+    """One correlated evidence item. Logs are already collapsed; anomaly points are onsets, not every minute."""
+
     model_config = ConfigDict(extra="forbid")
 
     timestamp: str
     title: str
+    summary: str
     service: str
     source_type: str
+    evidence_type: str
     evidence_id: str
     severity: str | None
+    metric_name: str | None = None
+    event_type: str | None = None
+    occurrence_count: int = 1
+    last_timestamp: str | None = None
+    related_evidence_ids: list[str] = Field(default_factory=list)
+
+
+class AnomalyMetricSummary(BaseModel):
+    """Counts for one metric. Points themselves are not included."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    metric: str
+    label: str
+    point_count: int
+    window_count: int
+    peak_severity: str | None = None
 
 
 class IncidentDetail(IncidentSummary):
@@ -97,6 +118,7 @@ class IncidentDetail(IncidentSummary):
     metrics: MetricEvidence
     anomalies_available: bool
     anomaly_windows: list[WindowEvidence]
+    anomaly_metrics: list[AnomalyMetricSummary]
     timeline_available: bool
     observed_services: list[str]
     timeline: list[TimelineEvidence]

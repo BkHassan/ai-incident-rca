@@ -99,7 +99,7 @@ describe("incident explorer", () => {
       "/investigations?incident=INC-011&run=1",
     );
     expect(screen.getByText("Observed logs")).toBeInTheDocument();
-    expect(screen.getByText("Detector windows")).toBeInTheDocument();
+    expect(screen.getByText("Anomalies detected")).toBeInTheDocument();
     expect(screen.getByText(/Order is not causation/)).toBeInTheDocument();
     expect(screen.queryByText(/true root cause|resolution|scenario|DB_CONNECTION_POOL/i)).not.toBeInTheDocument();
   });

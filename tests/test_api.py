@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 import unittest
@@ -199,7 +200,33 @@ class CatalogApiTests(unittest.TestCase):
         self.assertTrue(body["timeline_available"])
         self.assertGreater(len(body["timeline"]), 0)
         self.assertNotIn("description", body["timeline"][0])
+        self.assertNotIn("points", body)
         self._assert_no_ground_truth(response.text)
+
+    def test_timeline_matches_derived_evidence(self):
+        response = TestClient(create_app(load_env=False)).get("/api/incidents/INC-011")
+        self.assertEqual(response.status_code, 200, response.text)
+        body = response.json()
+        derived = json.loads((DATA / "derived" / "correlation" / "INC-011.json").read_text(encoding="utf-8"))
+        backend = {item["evidence_id"]: item for item in derived["evidence_items"]}
+        returned = body["timeline"]
+        self.assertGreater(len(returned), 0)
+        self.assertLess(len(returned), body["logs"]["line_count"])
+        types = {item["evidence_type"] for item in returned}
+        self.assertIn("ANOMALY", types)
+        self.assertIn("ANOMALY_WINDOW", types)
+        self.assertTrue(types & {"LOG_EVENT", "ERROR_EVENT", "TIMEOUT_EVENT", "HEALTH_EVENT"})
+        for item in returned:
+            match = backend[item["evidence_id"]]
+            self.assertEqual(item["summary"], match["summary"])
+            self.assertEqual(item["service"], match["service"])
+            self.assertEqual(item["evidence_type"], match["evidence_type"])
+        self.assertGreater(len(body["anomaly_windows"]), 0)
+        self.assertLess(len(body["anomaly_windows"]), 50)
+        self.assertGreater(len(body["anomaly_metrics"]), 0)
+        for metric in body["anomaly_metrics"]:
+            self.assertGreater(metric["point_count"] + metric["window_count"], 0)
+            self.assertTrue(metric["label"])
 
     def test_unknown_catalog_incident(self):
         response = TestClient(create_app(load_env=False)).get("/api/incidents/INC-099")

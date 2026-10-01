@@ -309,6 +309,47 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   padding-bottom: 0.4rem;
 }
 .timeline-list { max-height: 24rem; overflow: auto; }
+.metric-summary, .window-list { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.45rem; }
+.metric-summary li { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--line); padding-bottom: 0.35rem; }
+.metric-name { font-weight: 600; }
+.window-list li, .otime-row { display: grid; grid-template-columns: 0.7rem minmax(0, 1fr); gap: 0.55rem; align-items: start; }
+.timeline-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.9fr); gap: 1rem; align-items: start; }
+.otime { list-style: none; margin: 0.4rem 0 0; padding: 0 0 0 0.15rem; max-height: 36rem; overflow: auto; border-left: 1px solid var(--line); }
+.otime-hit {
+  display: grid;
+  gap: 0.1rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0.15rem 0 0.55rem;
+  cursor: pointer;
+}
+.otime-hit[aria-pressed="true"] { outline: 1px solid var(--accent); outline-offset: 2px; }
+.mark {
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-top: 0.35rem;
+  margin-left: -0.45rem;
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+  background: var(--bg);
+}
+.mark-log { border-color: var(--muted); }
+.mark-anomaly { border-color: var(--accent); background: var(--accent); }
+.mark-window { border-radius: 2px; border-color: var(--accent); background: transparent; }
+.mark-change { border-color: #d7c4a1; background: #d7c4a1; }
+.mark-boundary { border-radius: 0; border-color: var(--text); background: var(--text); }
+.type-label { font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.evidence-context {
+  position: sticky;
+  top: 1rem;
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 0.85rem;
+}
 
 @media (max-width: 960px) {
   .app { grid-template-columns: 1fr; }
@@ -344,7 +385,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .topbar-incident { grid-area: incident; }
   .status { grid-area: status; }
   .page-title { font-size: 1.4rem; }
-  .explorer-layout, .filters { grid-template-columns: 1fr; }
+  .explorer-layout, .filters, .timeline-layout, .metric-summary li { grid-template-columns: 1fr; }
+  .metric-summary li { display: grid; }
   .preview { display: none; }
 .incident-row {
   grid-template-columns: auto 1fr;

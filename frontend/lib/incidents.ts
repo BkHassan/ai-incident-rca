@@ -31,28 +31,48 @@ export type IncidentDetail = IncidentSummary & {
     series: string[];
   };
   anomalies_available: boolean;
-  anomaly_windows: Array<{
-    start_time: string;
-    end_time: string;
-    duration_minutes: number;
-    severity: string;
-    anomaly_count: number;
-    services: string[];
-    metrics: string[];
-    peak_z_score: number | null;
-    peak_metric: string;
-    peak_service: string;
-  }>;
+  anomaly_windows: AnomalyWindow[];
+  anomaly_metrics?: AnomalyMetricSummary[];
   timeline_available: boolean;
   observed_services: string[];
-  timeline: Array<{
-    timestamp: string;
-    title: string;
-    service: string;
-    source_type: string;
-    evidence_id: string;
-    severity: string | null;
-  }>;
+  timeline: TimelineEvidence[];
+};
+
+export type AnomalyWindow = {
+  start_time: string;
+  end_time: string;
+  duration_minutes: number;
+  severity: string;
+  anomaly_count: number;
+  services: string[];
+  metrics: string[];
+  peak_z_score: number | null;
+  peak_metric: string;
+  peak_service: string;
+};
+
+export type AnomalyMetricSummary = {
+  metric: string;
+  label: string;
+  point_count: number;
+  window_count: number;
+  peak_severity: string | null;
+};
+
+export type TimelineEvidence = {
+  timestamp: string;
+  title: string;
+  summary?: string;
+  service: string;
+  source_type: string;
+  evidence_type?: string;
+  evidence_id: string;
+  severity: string | null;
+  metric_name?: string | null;
+  event_type?: string | null;
+  occurrence_count?: number;
+  last_timestamp?: string | null;
+  related_evidence_ids?: string[];
 };
 
 export const severityOrder = ["CRITICAL", "HIGH", "MEDIUM", "LOW"] as const;
