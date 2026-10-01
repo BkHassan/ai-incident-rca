@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-003",
+  "title": "Degraded recommendations",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "recommendation-service",
+  "severity": "CRITICAL",
+  "start_time": "2026-01-15T21:24:01",
+  "end_time": "2026-01-15T21:54:55",
+  "duration_minutes": 30.9,
+  "window_start": "2026-01-15T19:48:00",
+  "window_end": "2026-01-15T22:23:00",
+  "description": "PagerDuty alert: error budget burn on recommendation-service; 44.7% of requests failing at peak and some requests timing out.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "recommendation-service",
+  "root_cause_variant": "connection_leak",
+  "root_cause_detail": "An error path introduced in recommendation-service v2.27.0 did not return connections to the pool; the pool (max 15) saturated gradually and requests queued until the acquisition timeout.",
+  "fault_start_time": "2026-01-15T21:08:16",
+  "expected_symptoms": [
+    "recommendation-service db_connection_utilization saturated at ~98% (baseline ~22%)",
+    "connection acquisition timeouts and database errors in recommendation-service logs",
+    "recommendation-service p95 latency rises from ~83ms to ~27.0s",
+    "recommendation-service error rate rises to ~44.7%",
+    "recommendation-service memory stays near baseline; CPU at most moderately elevated",
+    "utilization climbs gradually after deployment of recommendation-service v2.27.0"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "inventory-service",
+    "api-gateway"
+  ],
+  "resolution": "Rolled back recommendation-service to v2.26.7, fixed the missing connection release and enabled pool leak detection.",
+  "evidence_files": {
+    "logs": "logs/INC-003.jsonl",
+    "metrics": "metrics/INC-003.csv"
+  }
+}

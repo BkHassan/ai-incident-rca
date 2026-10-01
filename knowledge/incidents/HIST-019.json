@@ -1,0 +1,70 @@
+{
+  "incident_id": "HIST-019",
+  "title": "Gradual latency climb on orders-api then 5xx (Jan 2025)",
+  "occurred_at": "2025-01-29T21:12:03",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "LOW",
+  "duration_minutes": 36,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "request duration stretching over the afternoon",
+    "callers seeing timeouts and 5xx once the process was under heap pressure",
+    "occasional allocation failures or container restarts late in the incident",
+    "latency growing in step with memory, not with a sudden traffic spike"
+  ],
+  "observed_signals": [
+    "CPU increased only moderately until GC became frequent",
+    "GC pause time and heap-used warnings increased with memory",
+    "after a restart, memory dropped and then began climbing again",
+    "db_connection_utilization stayed well below saturation"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-01h06m",
+      "event": "traffic was unremarkable at the start"
+    },
+    {
+      "relative_time": "-55m",
+      "event": "memory_usage on orders-api began a near-linear climb"
+    },
+    {
+      "relative_time": "-29m",
+      "event": "GC / heap warnings became frequent on orders-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "error-rate or latency alert fired on orders-api"
+    },
+    {
+      "relative_time": "+10m",
+      "event": "restart or rollback dropped RSS; latency followed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "server-side sessions accumulated for users who never logged out",
+    "the memory limit was close to the working set even when healthy"
+  ],
+  "resolution": [
+    "cleared server-side sessions that were never expired",
+    "set a max session map size",
+    "restarted pods that had already crossed 90% RSS"
+  ],
+  "lessons_learned": [
+    "page on sustained memory slope, not only on OOM",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "latency",
+    "allocation",
+    "process",
+    "errors"
+  ],
+  "affected_services": [
+    "orders-api",
+    "api-gateway",
+    "checkout clients"
+  ]
+}

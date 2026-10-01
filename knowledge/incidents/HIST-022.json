@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-022",
+  "title": "Intermittent 503s from payment-api under weekday lunch",
+  "occurred_at": "2025-05-09T03:00:40",
+  "service": "payment-api",
+  "root_cause_service": "payment-api",
+  "severity": "CRITICAL",
+  "duration_minutes": 44,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "callers receiving 502/503/504 responses",
+    "p95 and p99 latency climbing together",
+    "connection-acquisition timeouts in service logs",
+    "threads waiting to acquire a database connection"
+  ],
+  "observed_signals": [
+    "pool stats showed checked-out connections near max with a wait queue",
+    "timeout-related WARN/ERROR rate on the service rose from near zero",
+    "db_connection_utilization on the service rose from a mid-20s baseline toward saturation",
+    "latency jumped by more than 10x while CPU stayed only moderately higher"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-14m",
+      "event": "a deploy finished on payment-api"
+    },
+    {
+      "relative_time": "-06m",
+      "event": "p95 latency on payment-api began climbing"
+    },
+    {
+      "relative_time": "-04m",
+      "event": "connection wait logs appeared on payment-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "SLO burn page for payment-api"
+    },
+    {
+      "relative_time": "+09m",
+      "event": "error rate returned toward baseline after the change"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "a recent deploy introduced a path that did not close connections",
+    "concurrency was higher than the pool was sized for"
+  ],
+  "resolution": [
+    "rolled back the release that stopped returning connections to the pool",
+    "enabled pool leak detection and added a saturation alert at 80%",
+    "confirmed wait queue dropped after the rollback"
+  ],
+  "lessons_learned": [
+    "do not raise pool size without checking for leaks",
+    "alert on pool utilization and acquire timeouts, not only on 5xx"
+  ],
+  "tags": [
+    "connections",
+    "retries",
+    "p95",
+    "errors"
+  ],
+  "affected_services": [
+    "payment-api",
+    "database",
+    "orders-api",
+    "api-gateway"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-026",
+  "title": "On-call: inventory-service error budget burn, database waits in logs",
+  "occurred_at": "2025-10-05T10:33:53",
+  "service": "orders-api",
+  "root_cause_service": "inventory-service",
+  "severity": "MEDIUM",
+  "duration_minutes": 52,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "elevated 5xx rate on the alerting service",
+    "SQLAlchemy/Hikari/Knex timeout acquiring a connection",
+    "database wait events coinciding with the latency climb",
+    "elevated p95 latency on the alerting service"
+  ],
+  "observed_signals": [
+    "memory stayed near baseline",
+    "timeout-related WARN/ERROR rate on the service rose from near zero",
+    "pool stats showed checked-out connections near max with a wait queue",
+    "connection wait time increased before error rate peaked"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-19m",
+      "event": "a config reload ran on inventory-service"
+    },
+    {
+      "relative_time": "-06m",
+      "event": "request duration histograms shifted right on inventory-service"
+    },
+    {
+      "relative_time": "-01m",
+      "event": "pool stats showed a wait queue on inventory-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx / error-rate alert fired on orders-api"
+    },
+    {
+      "relative_time": "+13m",
+      "event": "mitigation applied; latency and waits receded"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "a config reload halved max pool size",
+    "no alert existed on utilization before 5xx"
+  ],
+  "resolution": [
+    "reverted the pool-size config change that had shrunk max connections",
+    "required a review for pool settings in the next deploy",
+    "paged on utilization remaining above 90% for 5 minutes"
+  ],
+  "lessons_learned": [
+    "do not raise pool size without checking for leaks",
+    "alert on pool utilization and acquire timeouts, not only on 5xx"
+  ],
+  "tags": [
+    "latency",
+    "wait-events",
+    "slo",
+    "database"
+  ],
+  "affected_services": [
+    "orders-api",
+    "inventory-service",
+    "database",
+    "api-gateway"
+  ]
+}

@@ -1,0 +1,740 @@
+{
+  "incident_id": "INC-029",
+  "detector": "rolling_zscore",
+  "detector_version": "1.0.0",
+  "config": {
+    "baseline_window": 15,
+    "min_baseline_points": 10,
+    "z_threshold": 3.0,
+    "drift_lag": 30,
+    "severity": {
+      "medium": 10.0,
+      "high": 50.0
+    },
+    "exclude_anomalies_from_baseline": true,
+    "absolute_threshold_severity": "MEDIUM",
+    "metrics": {
+      "cpu_usage": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.5,
+        "min_abs_deviation": 10.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": 90.0
+      },
+      "memory_usage": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.25,
+        "min_abs_deviation": 5.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": 90.0
+      },
+      "request_rate": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 1.0,
+        "min_abs_deviation": 0.0,
+        "min_rel_deviation": 0.3,
+        "absolute_threshold": null
+      },
+      "latency_ms": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 2.0,
+        "min_abs_deviation": 20.0,
+        "min_rel_deviation": 0.5,
+        "absolute_threshold": null
+      },
+      "error_rate": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.05,
+        "min_abs_deviation": 1.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": null
+      },
+      "db_connection_utilization": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.5,
+        "min_abs_deviation": 10.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": 90.0
+      },
+      "downstream_latency_ms": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 2.0,
+        "min_abs_deviation": 20.0,
+        "min_rel_deviation": 0.5,
+        "absolute_threshold": null
+      }
+    },
+    "window_max_gap_minutes": 2.0
+  },
+  "series_analyzed": 39,
+  "observations_analyzed": 6357,
+  "points": [
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T09:10:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 208.7,
+      "baseline_mean": 108.06666666666666,
+      "baseline_std": 4.942045075048338,
+      "baseline_points": 15,
+      "z_score": 20.36269030434714,
+      "deviation": 100.63333333333333,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T09:13:00",
+      "service": "inventory-service",
+      "metric_name": "latency_ms",
+      "value": 48.9,
+      "baseline_mean": 24.426666666666666,
+      "baseline_std": 1.4002380749953438,
+      "baseline_points": 15,
+      "z_score": 12.236666666666666,
+      "deviation": 24.473333333333333,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T09:30:00",
+      "service": "payment-api",
+      "metric_name": "latency_ms",
+      "value": 396.5,
+      "baseline_mean": 215.82000000000002,
+      "baseline_std": 8.1097119906584,
+      "baseline_points": 15,
+      "z_score": 22.279459518183355,
+      "deviation": 180.67999999999998,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T09:38:00",
+      "service": "inventory-service",
+      "metric_name": "latency_ms",
+      "value": 45.8,
+      "baseline_mean": 22.426666666666666,
+      "baseline_std": 1.2549710677750228,
+      "baseline_points": 15,
+      "z_score": 11.686666666666666,
+      "deviation": 23.37333333333333,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:24:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 283.1,
+      "baseline_mean": 120.10666666666665,
+      "baseline_std": 10.823022199173831,
+      "baseline_points": 15,
+      "z_score": 15.05987240290197,
+      "deviation": 162.99333333333337,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:28:00",
+      "service": "inventory-service",
+      "metric_name": "downstream_latency_ms",
+      "value": 325.0,
+      "baseline_mean": 145.86,
+      "baseline_std": 13.254638002277865,
+      "baseline_points": 15,
+      "z_score": 13.515269143466162,
+      "deviation": 179.14,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:28:00",
+      "service": "inventory-service",
+      "metric_name": "latency_ms",
+      "value": 118.3,
+      "baseline_mean": 23.053333333333335,
+      "baseline_std": 1.4201944870166134,
+      "baseline_points": 15,
+      "z_score": 47.623333333333335,
+      "deviation": 95.24666666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:28:00",
+      "service": "orders-api",
+      "metric_name": "downstream_latency_ms",
+      "value": 177.4,
+      "baseline_mean": 72.23333333333333,
+      "baseline_std": 6.927962663486767,
+      "baseline_points": 15,
+      "z_score": 15.180027920897809,
+      "deviation": 105.16666666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:28:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 211.5,
+      "baseline_mean": 123.18,
+      "baseline_std": 10.454199429620889,
+      "baseline_points": 15,
+      "z_score": 8.448279621465268,
+      "deviation": 88.32,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:29:00",
+      "service": "inventory-service",
+      "metric_name": "downstream_latency_ms",
+      "value": 352.8,
+      "baseline_mean": 145.86,
+      "baseline_std": 13.254638002277865,
+      "baseline_points": 15,
+      "z_score": 15.612648188840502,
+      "deviation": 206.94,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:29:00",
+      "service": "inventory-service",
+      "metric_name": "latency_ms",
+      "value": 128.1,
+      "baseline_mean": 23.053333333333335,
+      "baseline_std": 1.4201944870166134,
+      "baseline_points": 15,
+      "z_score": 52.523333333333326,
+      "deviation": 105.04666666666665,
+      "direction": "up",
+      "severity": "HIGH",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:29:00",
+      "service": "orders-api",
+      "metric_name": "downstream_latency_ms",
+      "value": 180.9,
+      "baseline_mean": 72.23333333333333,
+      "baseline_std": 6.927962663486767,
+      "baseline_points": 15,
+      "z_score": 15.685226948376183,
+      "deviation": 108.66666666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:29:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 218.0,
+      "baseline_mean": 123.18,
+      "baseline_std": 10.454199429620889,
+      "baseline_points": 15,
+      "z_score": 9.070039330925463,
+      "deviation": 94.82,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:30:00",
+      "service": "inventory-service",
+      "metric_name": "downstream_latency_ms",
+      "value": 366.9,
+      "baseline_mean": 145.86,
+      "baseline_std": 13.254638002277865,
+      "baseline_points": 15,
+      "z_score": 16.67642676940806,
+      "deviation": 221.03999999999996,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:30:00",
+      "service": "inventory-service",
+      "metric_name": "latency_ms",
+      "value": 133.4,
+      "baseline_mean": 23.053333333333335,
+      "baseline_std": 1.4201944870166134,
+      "baseline_points": 15,
+      "z_score": 55.17333333333333,
+      "deviation": 110.34666666666666,
+      "direction": "up",
+      "severity": "HIGH",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:30:00",
+      "service": "orders-api",
+      "metric_name": "downstream_latency_ms",
+      "value": 177.9,
+      "baseline_mean": 72.23333333333333,
+      "baseline_std": 6.927962663486767,
+      "baseline_points": 15,
+      "z_score": 15.252199210537576,
+      "deviation": 105.66666666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:30:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 218.5,
+      "baseline_mean": 123.18,
+      "baseline_std": 10.454199429620889,
+      "baseline_points": 15,
+      "z_score": 9.117867000883939,
+      "deviation": 95.32,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:31:00",
+      "service": "inventory-service",
+      "metric_name": "downstream_latency_ms",
+      "value": 383.2,
+      "baseline_mean": 145.86,
+      "baseline_std": 13.254638002277865,
+      "baseline_points": 15,
+      "z_score": 17.906184986659923,
+      "deviation": 237.33999999999997,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:31:00",
+      "service": "inventory-service",
+      "metric_name": "latency_ms",
+      "value": 137.6,
+      "baseline_mean": 23.053333333333335,
+      "baseline_std": 1.4201944870166134,
+      "baseline_points": 15,
+      "z_score": 57.273333333333326,
+      "deviation": 114.54666666666665,
+      "direction": "up",
+      "severity": "HIGH",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:31:00",
+      "service": "orders-api",
+      "metric_name": "downstream_latency_ms",
+      "value": 187.6,
+      "baseline_mean": 72.23333333333333,
+      "baseline_std": 6.927962663486767,
+      "baseline_points": 15,
+      "z_score": 16.652322229549068,
+      "deviation": 115.36666666666666,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:31:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 226.8,
+      "baseline_mean": 123.18,
+      "baseline_std": 10.454199429620889,
+      "baseline_points": 15,
+      "z_score": 9.911806322194648,
+      "deviation": 103.62,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:32:00",
+      "service": "inventory-service",
+      "metric_name": "downstream_latency_ms",
+      "value": 331.9,
+      "baseline_mean": 145.86,
+      "baseline_std": 13.254638002277865,
+      "baseline_points": 15,
+      "z_score": 14.035841640339646,
+      "deviation": 186.03999999999996,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:32:00",
+      "service": "inventory-service",
+      "metric_name": "latency_ms",
+      "value": 123.1,
+      "baseline_mean": 23.053333333333335,
+      "baseline_std": 1.4201944870166134,
+      "baseline_points": 15,
+      "z_score": 50.023333333333326,
+      "deviation": 100.04666666666665,
+      "direction": "up",
+      "severity": "HIGH",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:32:00",
+      "service": "orders-api",
+      "metric_name": "downstream_latency_ms",
+      "value": 167.3,
+      "baseline_mean": 72.23333333333333,
+      "baseline_std": 6.927962663486767,
+      "baseline_points": 15,
+      "z_score": 13.722167870174502,
+      "deviation": 95.06666666666668,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:32:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 209.9,
+      "baseline_mean": 123.18,
+      "baseline_std": 10.454199429620889,
+      "baseline_points": 15,
+      "z_score": 8.295231077598144,
+      "deviation": 86.72,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T10:43:00",
+      "service": "recommendation-service",
+      "metric_name": "latency_ms",
+      "value": 176.7,
+      "baseline_mean": 75.65333333333334,
+      "baseline_std": 2.9139729057144805,
+      "baseline_points": 15,
+      "z_score": 34.67659787381959,
+      "deviation": 101.04666666666665,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-029",
+      "timestamp": "2026-03-07T11:12:00",
+      "service": "api-gateway",
+      "metric_name": "latency_ms",
+      "value": 350.7,
+      "baseline_mean": 168.2866666666667,
+      "baseline_std": 19.40444966152523,
+      "baseline_points": 15,
+      "z_score": 9.400592983320673,
+      "deviation": 182.4133333333333,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    }
+  ],
+  "windows": [
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T09:10:00",
+      "end_time": "2026-03-07T09:10:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "orders-api"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "orders-api:latency_ms"
+      ],
+      "peak_deviation": 20.36269030434714,
+      "peak_z_score": 20.36269030434714,
+      "peak_metric": "latency_ms",
+      "peak_service": "orders-api",
+      "peak_timestamp": "2026-03-07T09:10:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T09:13:00",
+      "end_time": "2026-03-07T09:13:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "inventory-service"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "inventory-service:latency_ms"
+      ],
+      "peak_deviation": 12.236666666666666,
+      "peak_z_score": 12.236666666666666,
+      "peak_metric": "latency_ms",
+      "peak_service": "inventory-service",
+      "peak_timestamp": "2026-03-07T09:13:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T09:30:00",
+      "end_time": "2026-03-07T09:30:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "payment-api"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "payment-api:latency_ms"
+      ],
+      "peak_deviation": 22.279459518183355,
+      "peak_z_score": 22.279459518183355,
+      "peak_metric": "latency_ms",
+      "peak_service": "payment-api",
+      "peak_timestamp": "2026-03-07T09:30:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T09:38:00",
+      "end_time": "2026-03-07T09:38:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "inventory-service"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "inventory-service:latency_ms"
+      ],
+      "peak_deviation": 11.686666666666666,
+      "peak_z_score": 11.686666666666666,
+      "peak_metric": "latency_ms",
+      "peak_service": "inventory-service",
+      "peak_timestamp": "2026-03-07T09:38:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T10:24:00",
+      "end_time": "2026-03-07T10:24:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "orders-api"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "orders-api:latency_ms"
+      ],
+      "peak_deviation": 15.05987240290197,
+      "peak_z_score": 15.05987240290197,
+      "peak_metric": "latency_ms",
+      "peak_service": "orders-api",
+      "peak_timestamp": "2026-03-07T10:24:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T10:28:00",
+      "end_time": "2026-03-07T10:32:00",
+      "duration_minutes": 4.0,
+      "severity": "HIGH",
+      "anomaly_count": 20,
+      "affected_services": [
+        "inventory-service",
+        "orders-api"
+      ],
+      "affected_metrics": [
+        "downstream_latency_ms",
+        "latency_ms"
+      ],
+      "affected_series": [
+        "inventory-service:downstream_latency_ms",
+        "inventory-service:latency_ms",
+        "orders-api:downstream_latency_ms",
+        "orders-api:latency_ms"
+      ],
+      "peak_deviation": 57.273333333333326,
+      "peak_z_score": 57.273333333333326,
+      "peak_metric": "latency_ms",
+      "peak_service": "inventory-service",
+      "peak_timestamp": "2026-03-07T10:31:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T10:43:00",
+      "end_time": "2026-03-07T10:43:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "recommendation-service"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "recommendation-service:latency_ms"
+      ],
+      "peak_deviation": 34.67659787381959,
+      "peak_z_score": 34.67659787381959,
+      "peak_metric": "latency_ms",
+      "peak_service": "recommendation-service",
+      "peak_timestamp": "2026-03-07T10:43:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-029",
+      "start_time": "2026-03-07T11:12:00",
+      "end_time": "2026-03-07T11:12:00",
+      "duration_minutes": 0.0,
+      "severity": "LOW",
+      "anomaly_count": 1,
+      "affected_services": [
+        "api-gateway"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "api-gateway:latency_ms"
+      ],
+      "peak_deviation": 9.400592983320673,
+      "peak_z_score": 9.400592983320673,
+      "peak_metric": "latency_ms",
+      "peak_service": "api-gateway",
+      "peak_timestamp": "2026-03-07T11:12:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    }
+  ]
+}

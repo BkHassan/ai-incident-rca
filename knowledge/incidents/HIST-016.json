@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-016",
+  "title": "payment-api slowed over the afternoon with rising RSS",
+  "occurred_at": "2025-08-08T09:27:25",
+  "service": "payment-api",
+  "root_cause_service": "payment-api",
+  "severity": "HIGH",
+  "duration_minutes": 28,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "latency growing in step with memory, not with a sudden traffic spike",
+    "callers seeing timeouts and 5xx once the process was under heap pressure",
+    "timeouts that could be mistaken for a slow dependency",
+    "occasional allocation failures or container restarts late in the incident"
+  ],
+  "observed_signals": [
+    "after a restart, memory dropped and then began climbing again",
+    "memory_usage rose smoothly over a long period rather than in a single jump",
+    "CPU increased only moderately until GC became frequent",
+    "db_connection_utilization stayed well below saturation",
+    "db_connection_utilization stayed below 60% throughout"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-01h19m",
+      "event": "a deploy finished on payment-api"
+    },
+    {
+      "relative_time": "-01h10m",
+      "event": "memory_usage on payment-api began a near-linear climb"
+    },
+    {
+      "relative_time": "-47m",
+      "event": "GC / heap warnings became frequent on payment-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "error-rate or latency alert fired on payment-api"
+    },
+    {
+      "relative_time": "+18m",
+      "event": "restart or rollback dropped RSS; latency followed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "a library upgrade retained event listeners",
+    "no SLO existed on RSS slope"
+  ],
+  "resolution": [
+    "rolled back the library version that retained listeners",
+    "captured a heap dump before the second restart",
+    "added a slow memory-growth monitor (15-minute slope)"
+  ],
+  "lessons_learned": [
+    "heap dumps need to be taken before the second crash",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "rss",
+    "timeouts",
+    "gc-pauses",
+    "stability"
+  ],
+  "affected_services": [
+    "payment-api",
+    "orders-api",
+    "api-gateway"
+  ]
+}

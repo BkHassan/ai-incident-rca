@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-004",
+  "title": "Timeouts and 5xx on inventory-service",
+  "scenario": "MEMORY_LEAK",
+  "service": "inventory-service",
+  "severity": "HIGH",
+  "start_time": "2026-01-19T12:45:21",
+  "end_time": "2026-01-19T13:25:34",
+  "duration_minutes": 40.2,
+  "window_start": "2026-01-19T11:18:00",
+  "window_end": "2026-01-19T13:53:00",
+  "description": "Elevated latency on inventory-service (p95 262ms) with rising errors reported by consumers.",
+  "true_root_cause": "MEMORY_LEAK",
+  "root_cause_service": "inventory-service",
+  "root_cause_variant": "session_retention",
+  "root_cause_detail": "Per-request session objects in inventory-service were retained by a global registry, so memory grew with traffic.",
+  "fault_start_time": "2026-01-19T11:43:21",
+  "expected_symptoms": [
+    "inventory-service memory_usage climbs gradually from ~40% to ~99% over ~62+ minutes",
+    "increasing GC / heap pressure logs on inventory-service",
+    "inventory-service p95 latency rises from ~32ms to ~262ms as memory grows",
+    "inventory-service errors appear late, error rate up to ~13.5%",
+    "inventory-service db_connection_utilization stays within normal range"
+  ],
+  "affected_services": [
+    "inventory-service",
+    "payment-api",
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Restarted the pods, removed the global registry reference and added a heap usage alert.",
+  "evidence_files": {
+    "logs": "logs/INC-004.jsonl",
+    "metrics": "metrics/INC-004.csv"
+  }
+}

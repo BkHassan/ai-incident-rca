@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-001",
+  "title": "payment-api error-rate SLO burn; upstream acquirer-gateway slow",
+  "occurred_at": "2025-07-04T03:00:36",
+  "service": "payment-api",
+  "root_cause_service": "payment-api",
+  "severity": "LOW",
+  "duration_minutes": 35,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "outbound calls to a dependency approaching the client timeout",
+    "dependency health checks failing or degrading",
+    "callers receiving 502/503/504 responses",
+    "end-to-end latency dominated by waiting on a dependency"
+  ],
+  "observed_signals": [
+    "retries increased request rate slightly without a user-traffic surge",
+    "caller CPU and memory stayed close to baseline",
+    "downstream_latency_ms on the caller rose toward the configured client timeout",
+    "timeout logs named a specific dependency, not the local database"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-07m",
+      "event": "synthetic checks to acquirer-gateway were still green"
+    },
+    {
+      "relative_time": "-02m",
+      "event": "outbound p95 from payment-api toward acquirer-gateway rose"
+    },
+    {
+      "relative_time": "-01m",
+      "event": "circuit breaker or retry logs referenced acquirer-gateway"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx alert fired on payment-api"
+    },
+    {
+      "relative_time": "+15m",
+      "event": "acquirer-gateway recovered or was isolated; caller errors receded"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "acquirer-gateway was degraded in one region",
+    "payment-api timeout was tight relative to the provider p99"
+  ],
+  "resolution": [
+    "confirmed acquirer-gateway latency on the provider status page and their dashboards",
+    "raised the client timeout only after proving the dependency was the bottleneck",
+    "enabled a circuit breaker and a cached fallback for non-critical reads"
+  ],
+  "lessons_learned": [
+    "distinguish caller CPU/memory (flat) from outbound latency (up)",
+    "fallback and circuit breaking should be tested, not only documented"
+  ],
+  "tags": [
+    "retries",
+    "upstream",
+    "slo",
+    "p95",
+    "acquirer"
+  ],
+  "affected_services": [
+    "payment-api",
+    "acquirer-gateway",
+    "orders-api"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "incident_id": "HIST-013",
+  "title": "inventory-service error-rate SLO burn; upstream warehouse-api slow",
+  "occurred_at": "2025-10-22T03:05:32",
+  "service": "inventory-service",
+  "root_cause_service": "inventory-service",
+  "severity": "LOW",
+  "duration_minutes": 16,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "memory moved a few percentage points but stayed far from the limit",
+    "dependency health checks failing or degrading",
+    "outbound calls to a dependency approaching the client timeout",
+    "request latency well above the usual band",
+    "increase in 5xx responses seen by callers"
+  ],
+  "observed_signals": [
+    "caller CPU and memory stayed close to baseline",
+    "timeout logs named a specific dependency, not the local database",
+    "downstream_latency_ms on the caller rose toward the configured client timeout",
+    "error rate rose after outbound calls started timing out"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-15m",
+      "event": "a batch window started on warehouse-api"
+    },
+    {
+      "relative_time": "-03m",
+      "event": "inventory-service began retrying calls to warehouse-api"
+    },
+    {
+      "relative_time": "-02m",
+      "event": "client-timeout errors named warehouse-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx alert fired on inventory-service"
+    },
+    {
+      "relative_time": "+09m",
+      "event": "fallback served cached responses until warehouse-api recovered"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "a batch job on warehouse-api consumed the dependency's capacity",
+    "caller retries multiplied load"
+  ],
+  "resolution": [
+    "paused the batch job that was overloading warehouse-api",
+    "spread the job and added a shared rate limit",
+    "documented the dependency SLO in the caller runbook"
+  ],
+  "lessons_learned": [
+    "retry storms can look like a traffic surge on the caller",
+    "held DB connections during a slow downstream call are a side effect of waiting, not a saturated local pool"
+  ],
+  "tags": [
+    "timeouts",
+    "dependency",
+    "latency",
+    "5xx",
+    "warehouse"
+  ],
+  "affected_services": [
+    "inventory-service",
+    "warehouse-api",
+    "orders-api"
+  ]
+}

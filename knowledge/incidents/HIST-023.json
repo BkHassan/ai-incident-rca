@@ -1,0 +1,72 @@
+{
+  "incident_id": "HIST-023",
+  "title": "Pager: recommendation-service p95 and memory both off baseline (Mar 2025)",
+  "occurred_at": "2025-03-08T09:27:49",
+  "service": "recommendation-service",
+  "root_cause_service": "recommendation-service",
+  "severity": "MEDIUM",
+  "duration_minutes": 102,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "errors appearing late in the window after a long slow period",
+    "occasional allocation failures or container restarts late in the incident",
+    "process memory usage climbing for tens of minutes",
+    "latency growing in step with memory, not with a sudden traffic spike",
+    "timeouts that could be mistaken for a slow dependency"
+  ],
+  "observed_signals": [
+    "CPU increased only moderately until GC became frequent",
+    "db_connection_utilization stayed well below saturation",
+    "latency correlated with memory; errors arrived later",
+    "memory_usage rose smoothly over a long period rather than in a single jump",
+    "db_connection_utilization stayed below 60% throughout"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-48m",
+      "event": "a deploy or flag change on recommendation-service that populated a new cache"
+    },
+    {
+      "relative_time": "-40m",
+      "event": "memory_usage on recommendation-service began a near-linear climb"
+    },
+    {
+      "relative_time": "-19m",
+      "event": "GC / heap warnings became frequent on recommendation-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "recommendation-service started returning 5xx to callers"
+    },
+    {
+      "relative_time": "+25m",
+      "event": "a second climb started until the code fix landed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "an in-process cache had no eviction policy",
+    "the growth was slow enough that a 15-minute baseline looked almost normal at first"
+  ],
+  "resolution": [
+    "restarted the affected deployment as immediate mitigation",
+    "identified an unbounded in-process cache with no TTL",
+    "shipped a hotfix with eviction and a heap-growth alert"
+  ],
+  "lessons_learned": [
+    "caches without TTL belong on the review checklist for every service",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "memory",
+    "gc",
+    "latency",
+    "rss"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "api-gateway",
+    "home-page clients"
+  ]
+}

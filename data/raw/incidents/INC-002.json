@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-002",
+  "title": "payment-api error-rate SLO burn",
+  "scenario": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "service": "payment-api",
+  "severity": "MEDIUM",
+  "start_time": "2026-01-11T20:06:27",
+  "end_time": "2026-01-11T20:29:42",
+  "duration_minutes": 23.2,
+  "window_start": "2026-01-11T18:00:00",
+  "window_end": "2026-01-11T20:49:00",
+  "description": "Customers report card payments failing or stuck in pending. payment-api shows elevated latency and intermittent 5xx responses.",
+  "true_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "root_cause_service": "acquirer-gateway",
+  "root_cause_variant": "provider_degraded",
+  "root_cause_detail": "External dependency acquirer-gateway degraded and responded slowly; payment-api calls exceeded the 5000ms client timeout. The degradation was intermittent (flapping).",
+  "fault_start_time": "2026-01-11T20:04:30",
+  "expected_symptoms": [
+    "payment-api downstream_latency_ms rises from ~164ms to ~5.1s (client timeout 5000ms)",
+    "timeout and retry logs on calls from payment-api to acquirer-gateway",
+    "payment-api p95 latency rises to ~5.2s, error rate up to ~3.3%",
+    "payment-api CPU and memory stay near baseline",
+    "intermittent / flapping latency pattern"
+  ],
+  "affected_services": [
+    "payment-api",
+    "recommendation-service",
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Failed over to the secondary acquirer-gateway region and tuned the payment-api timeout and retry budget.",
+  "evidence_files": {
+    "logs": "logs/INC-002.jsonl",
+    "metrics": "metrics/INC-002.csv"
+  }
+}

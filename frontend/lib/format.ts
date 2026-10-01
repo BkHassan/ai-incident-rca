@@ -1,0 +1,23 @@
+import type { EvidenceSource } from "@/lib/types";
+
+const SOURCE_LABEL: Record<EvidenceSource, string> = {
+  LOG: "Log",
+  METRIC_ANOMALY: "Anomaly",
+  ANOMALY_WINDOW: "Anomaly window",
+  HISTORICAL_INCIDENT: "Historical",
+  TECHNICAL_DOCUMENT: "Technical",
+};
+
+export function evidenceSourceLabel(source: EvidenceSource): string {
+  return SOURCE_LABEL[source];
+}
+
+export function formatTimestamp(value: string): string {
+  if (!value) return "—";
+  const parsed = value.replace("T", " ");
+  return parsed.length > 19 ? parsed.slice(0, 19) : parsed;
+}
+
+export function formatScore(value: number): string {
+  return value.toFixed(2);
+}

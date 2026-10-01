@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-011",
+  "title": "payment-api error-rate SLO burn",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "payment-api",
+  "severity": "HIGH",
+  "start_time": "2026-02-03T06:18:15",
+  "end_time": "2026-02-03T06:41:59",
+  "duration_minutes": 23.7,
+  "window_start": "2026-02-03T04:56:00",
+  "window_end": "2026-02-03T07:09:00",
+  "description": "Elevated latency on payment-api (p95 13.2s) with rising errors reported by consumers.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "payment-api",
+  "root_cause_variant": "connection_leak",
+  "root_cause_detail": "An error path introduced in payment-api v3.5.0 did not return connections to the pool; the pool (max 10) saturated gradually and requests queued until the acquisition timeout.",
+  "fault_start_time": "2026-02-03T06:06:16",
+  "expected_symptoms": [
+    "payment-api db_connection_utilization saturated at ~98% (baseline ~38%)",
+    "connection acquisition timeouts and database errors in payment-api logs",
+    "payment-api p95 latency rises from ~193ms to ~13.2s",
+    "payment-api error rate rises to ~24.5%",
+    "payment-api memory stays near baseline; CPU at most moderately elevated",
+    "utilization climbs gradually after deployment of payment-api v3.5.0"
+  ],
+  "affected_services": [
+    "payment-api",
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Rolled back payment-api to v3.4.12, fixed the missing connection release and enabled pool leak detection.",
+  "evidence_files": {
+    "logs": "logs/INC-011.jsonl",
+    "metrics": "metrics/INC-011.csv"
+  }
+}

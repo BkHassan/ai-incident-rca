@@ -1,0 +1,73 @@
+{
+  "incident_id": "HIST-027",
+  "title": "orders-api p95 climbed and clients saw timeouts",
+  "occurred_at": "2024-07-26T19:33:50",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "LOW",
+  "duration_minutes": 31,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "pool wait count climbing on the affected service",
+    "brief increase in held database connections while waiting on I/O",
+    "increase in 5xx responses seen by callers",
+    "database wait events coinciding with the latency climb",
+    "p95 and p99 latency climbing together"
+  ],
+  "observed_signals": [
+    "latency jumped by more than 10x while CPU stayed only moderately higher",
+    "memory stayed near baseline",
+    "timeout-related WARN/ERROR rate on the service rose from near zero",
+    "db_connection_utilization on the service rose from a mid-20s baseline toward saturation",
+    "downstream_latency_ms on callers increased as they waited on orders-api"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-26m",
+      "event": "a deploy finished on orders-api"
+    },
+    {
+      "relative_time": "-08m",
+      "event": "request duration histograms shifted right on orders-api"
+    },
+    {
+      "relative_time": "-06m",
+      "event": "connection wait logs appeared on orders-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx / error-rate alert fired on orders-api"
+    },
+    {
+      "relative_time": "+12m",
+      "event": "error rate returned toward baseline after the change"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "a recent deploy introduced a path that did not close connections",
+    "concurrency was higher than the pool was sized for"
+  ],
+  "resolution": [
+    "rolled back the release that stopped returning connections to the pool",
+    "enabled pool leak detection and added a saturation alert at 80%",
+    "confirmed wait queue dropped after the rollback"
+  ],
+  "lessons_learned": [
+    "do not raise pool size without checking for leaks",
+    "alert on pool utilization and acquire timeouts, not only on 5xx"
+  ],
+  "tags": [
+    "latency",
+    "wait-events",
+    "slo",
+    "database"
+  ],
+  "affected_services": [
+    "orders-api",
+    "database",
+    "api-gateway",
+    "checkout clients"
+  ]
+}

@@ -1,0 +1,9 @@
+keyword,DB pool,Memory leak,Downstream timeout,Normal
+timeout / timed out / deadline,1.0,0.7,1.0,0.4
+'Database connection timeout',0.8,0.2,0.3,0.4
+pool,1.0,1.0,1.0,0.8
+heap / GC,1.0,1.0,1.0,1.0
+OOM / out of memory,0.0,0.5,0.0,0.0
+HTTP 503 / 502 / 504,1.0,0.9,1.0,0.2
+circuit breaker / ejecting,0.3,0.0,0.3,0.0
+retry,0.9,0.9,1.0,1.0

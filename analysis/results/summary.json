@@ -1,0 +1,1073 @@
+{
+  "dataset": {
+    "total_cases": 35,
+    "cases_per_scenario": {
+      "DB_CONNECTION_POOL_EXHAUSTION": 10,
+      "MEMORY_LEAK": 10,
+      "DOWNSTREAM_SERVICE_TIMEOUT": 10,
+      "NORMAL": 5
+    },
+    "failure_incidents": 30,
+    "log_records": 98252,
+    "log_levels": {
+      "INFO": 74820,
+      "WARN": 14374,
+      "ERROR": 9058
+    },
+    "log_level_other": 0,
+    "metric_rows": 34254,
+    "metric_columns": [
+      "timestamp",
+      "incident_id",
+      "service",
+      "cpu_usage",
+      "memory_usage",
+      "request_rate",
+      "latency_ms",
+      "error_rate",
+      "db_connection_utilization",
+      "downstream_latency_ms"
+    ],
+    "services_in_metrics": [
+      "api-gateway",
+      "database",
+      "inventory-service",
+      "orders-api",
+      "payment-api",
+      "recommendation-service"
+    ],
+    "services_in_logs": [
+      "api-gateway",
+      "database",
+      "inventory-service",
+      "orders-api",
+      "payment-api",
+      "recommendation-service"
+    ],
+    "date_range": [
+      "2026-01-08 23:33:00",
+      "2026-03-16 21:30:00"
+    ],
+    "blank_values": {
+      "cpu_usage": 0,
+      "memory_usage": 0,
+      "request_rate": 0,
+      "latency_ms": 0,
+      "error_rate": 0,
+      "db_connection_utilization": 5709,
+      "downstream_latency_ms": 11418
+    },
+    "blank_by_service": {
+      "db_connection_utilization": [
+        "api-gateway"
+      ],
+      "downstream_latency_ms": [
+        "database",
+        "recommendation-service"
+      ]
+    }
+  },
+  "checks": {
+    "DB_CONNECTION_POOL_EXHAUSTION": {
+      "db util baseline <= 75% and peak >= 90%": "10/10",
+      "latency peak >= 2x baseline": "10/10",
+      "error rate rises >= 1 pp": "10/10",
+      "timeout-related WARN/ERROR rate higher than baseline": "10/10",
+      "CPU ratio smaller than DB-util ratio and latency ratio": "10/10",
+      "CPU peak/baseline >= 2 (CPU strongly elevated)": "1/10",
+      "memory change within +/-5 pp": "10/10"
+    },
+    "MEMORY_LEAK": {
+      "memory rises >= 15 pp": "10/10",
+      "leak phase linear-fit R^2 >= 0.9 (gradual trend)": "10/10",
+      "largest 1-min step < 10% of total rise (no single jump)": "10/10",
+      "latency peak >= 1.5x baseline": "10/10",
+      "Spearman(memory, latency) >= 0.5 during fault..end": "9/10",
+      "error rate rises >= 1 pp": "9/10",
+      "error onset after memory onset": "9/10",
+      "db util peak < 60%": "10/10"
+    },
+    "DOWNSTREAM_SERVICE_TIMEOUT": {
+      "reported service downstream p95 >= 2.5x baseline": "10/10",
+      "timeout-related WARN/ERROR rate higher than baseline": "10/10",
+      "reported service error rate rises >= 1 pp": "10/10",
+      "focus CPU peak/baseline < 1.3": "10/10",
+      "focus memory change < 5 pp": "10/10",
+      "focus db util peak < 90% (no pool saturation)": "10/10"
+    },
+    "NORMAL": {
+      "no service with error rate > 2% for >= 1 min": "5/5",
+      "no DB utilization >= 90%": "5/5",
+      "WARN logs present": "5/5",
+      "latency fluctuates (CV > 0.05 on alerting service)": "5/5"
+    }
+  },
+  "templates": {
+    "DB_CONNECTION_POOL_EXHAUSTION": {
+      "unique_error_templates": 98,
+      "error_templates_per_incident": [
+        41,
+        50,
+        46,
+        46,
+        48,
+        40,
+        32,
+        44,
+        44,
+        43
+      ],
+      "pairwise_jaccard_mean": 0.4218,
+      "pairwise_jaccard_max": 0.6364,
+      "templates_in_every_incident": 7,
+      "templates_in_every_incident_and_nowhere_else": 0,
+      "best_exclusive": [
+        {
+          "template": "Error loading user history for #: timeout acquiring db connection after #ms",
+          "coverage_in": 0.3,
+          "cases_outside": 0
+        },
+        {
+          "template": "GET /healthz # (db: timeout)",
+          "coverage_in": 0.3,
+          "cases_outside": 0
+        },
+        {
+          "template": "could not obtain database connection within #s while handling GET /api/v#/cart",
+          "coverage_in": 0.3,
+          "cases_outside": 0
+        }
+      ],
+      "most_common": [
+        {
+          "template": "Failed to deliver webhook for payment pay_#: HTTP # from merchant endpoint",
+          "coverage_in": 1.0,
+          "cases_outside": 21
+        },
+        {
+          "template": "Fraud score # above review threshold for payment pay_#",
+          "coverage_in": 1.0,
+          "cases_outside": 21
+        },
+        {
+          "template": "\"GET /api/v#/recommendations HTTP/#\" # upstream=recommendation-service duration=#ms",
+          "coverage_in": 1.0,
+          "cases_outside": 22
+        }
+      ]
+    },
+    "MEMORY_LEAK": {
+      "unique_error_templates": 76,
+      "error_templates_per_incident": [
+        39,
+        27,
+        43,
+        37,
+        32,
+        33,
+        29,
+        47,
+        20,
+        43
+      ],
+      "pairwise_jaccard_mean": 0.4195,
+      "pairwise_jaccard_max": 0.6538,
+      "templates_in_every_incident": 12,
+      "templates_in_every_incident_and_nowhere_else": 0,
+      "best_exclusive": [
+        {
+          "template": "GET /healthz #",
+          "coverage_in": 0.3,
+          "cases_outside": 0
+        },
+        {
+          "template": "gc: collection gen=# took #s, # objects collected",
+          "coverage_in": 0.3,
+          "cases_outside": 0
+        },
+        {
+          "template": "RangeError: Array buffer allocation failed",
+          "coverage_in": 0.3,
+          "cases_outside": 0
+        }
+      ],
+      "most_common": [
+        {
+          "template": "duration: # ms  statement: UPDATE stock_levels SET reserved = reserved + $# WHERE sku = $#",
+          "coverage_in": 1.0,
+          "cases_outside": 19
+        },
+        {
+          "template": "Payment pay_# declined by issuer: insufficient_funds",
+          "coverage_in": 1.0,
+          "cases_outside": 21
+        },
+        {
+          "template": "TLS handshake error from #.#: unknown certificate authority",
+          "coverage_in": 1.0,
+          "cases_outside": 21
+        }
+      ]
+    },
+    "DOWNSTREAM_SERVICE_TIMEOUT": {
+      "unique_error_templates": 79,
+      "error_templates_per_incident": [
+        46,
+        33,
+        38,
+        34,
+        44,
+        44,
+        53,
+        31,
+        42,
+        24
+      ],
+      "pairwise_jaccard_mean": 0.4774,
+      "pairwise_jaccard_max": 0.7143,
+      "templates_in_every_incident": 14,
+      "templates_in_every_incident_and_nowhere_else": 0,
+      "best_exclusive": [
+        {
+          "template": "httpx.ConnectTimeout: connection to inventory-service timed out",
+          "coverage_in": 0.4,
+          "cases_outside": 0
+        },
+        {
+          "template": "Request POST /api/v#/refunds failed with status # after #ms",
+          "coverage_in": 0.2,
+          "cases_outside": 0
+        },
+        {
+          "template": "Retry 'acquirer-gateway' attempt # of # after SocketTimeoutException",
+          "coverage_in": 0.2,
+          "cases_outside": 0
+        }
+      ],
+      "most_common": [
+        {
+          "template": "slow upstream response from orders-api: #ms for GET /api/v#/cart",
+          "coverage_in": 1.0,
+          "cases_outside": 7
+        },
+        {
+          "template": "slow upstream response from orders-api: #ms for GET /api/v#/orders/#",
+          "coverage_in": 1.0,
+          "cases_outside": 9
+        },
+        {
+          "template": "slow upstream response from payment-api: #ms for POST /api/v#/payments",
+          "coverage_in": 1.0,
+          "cases_outside": 9
+        }
+      ]
+    }
+  },
+  "leakage": {
+    "label_strings_in_logs": 0,
+    "metric_rows_shared_by_multiple_incidents": 0,
+    "description_word_counts": [
+      {
+        "scenario": "DB pool",
+        "pool": 0,
+        "connection": 0,
+        "memory": 0,
+        "leak": 0,
+        "heap": 0,
+        "oom": 0,
+        "garbage": 0,
+        "downstream": 0,
+        "provider": 0,
+        "network": 0,
+        "dependency": 0,
+        "timing out": 4,
+        "timeout": 2
+      },
+      {
+        "scenario": "Memory leak",
+        "pool": 0,
+        "connection": 0,
+        "memory": 0,
+        "leak": 0,
+        "heap": 0,
+        "oom": 0,
+        "garbage": 0,
+        "downstream": 0,
+        "provider": 0,
+        "network": 0,
+        "dependency": 0,
+        "timing out": 1,
+        "timeout": 3
+      },
+      {
+        "scenario": "Downstream timeout",
+        "pool": 0,
+        "connection": 0,
+        "memory": 0,
+        "leak": 0,
+        "heap": 0,
+        "oom": 0,
+        "garbage": 0,
+        "downstream": 0,
+        "provider": 0,
+        "network": 0,
+        "dependency": 0,
+        "timing out": 1,
+        "timeout": 2
+      },
+      {
+        "scenario": "Normal",
+        "pool": 0,
+        "connection": 0,
+        "memory": 0,
+        "leak": 0,
+        "heap": 0,
+        "oom": 0,
+        "garbage": 0,
+        "downstream": 0,
+        "provider": 0,
+        "network": 0,
+        "dependency": 0,
+        "timing out": 0,
+        "timeout": 0
+      }
+    ]
+  },
+  "ordering": {
+    "DB_CONNECTION_POOL_EXHAUSTION": {
+      "orderings": {
+        "latency=primary < error": 5,
+        "error=latency=primary": 5
+      },
+      "primary_onset_after_fault_min": {
+        "min": 2.0,
+        "max": 19.7,
+        "mean": 7.41,
+        "std": 5.6748,
+        "n": 10
+      },
+      "lag_after_primary_min": {
+        "latency": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "n": 10
+        },
+        "error": {
+          "min": 0.0,
+          "max": 1.0,
+          "mean": 0.5,
+          "std": 0.527,
+          "n": 10
+        },
+        "timeout_log": {
+          "min": -10.3,
+          "max": 1.4,
+          "mean": -2.28,
+          "std": 4.9418,
+          "n": 10
+        }
+      }
+    },
+    "MEMORY_LEAK": {
+      "orderings": {
+        "primary < latency < error": 8,
+        "primary < latency (not all signals crossed)": 1,
+        "primary < error < latency": 1
+      },
+      "primary_onset_after_fault_min": {
+        "min": 10.4,
+        "max": 27.7,
+        "mean": 20.37,
+        "std": 5.4181,
+        "n": 10
+      },
+      "lag_after_primary_min": {
+        "latency": {
+          "min": 17.0,
+          "max": 87.0,
+          "mean": 42.6,
+          "std": 19.3057,
+          "n": 10
+        },
+        "error": {
+          "min": 25.0,
+          "max": 98.0,
+          "mean": 49.3444,
+          "std": 20.9689,
+          "n": 9
+        },
+        "timeout_log": {
+          "min": 32.2,
+          "max": 117.9,
+          "mean": 63.2167,
+          "std": 29.0402,
+          "n": 6
+        }
+      }
+    },
+    "DOWNSTREAM_SERVICE_TIMEOUT": {
+      "orderings": {
+        "latency=primary < error": 5,
+        "error=latency=primary": 4,
+        "primary < latency < error": 1
+      },
+      "primary_onset_after_fault_min": {
+        "min": 0.1,
+        "max": 1.2,
+        "mean": 0.58,
+        "std": 0.3521,
+        "n": 10
+      },
+      "lag_after_primary_min": {
+        "latency": {
+          "min": 0.0,
+          "max": 1.0,
+          "mean": 0.1,
+          "std": 0.3162,
+          "n": 10
+        },
+        "error": {
+          "min": 0.0,
+          "max": 6.0,
+          "mean": 1.7,
+          "std": 2.2136,
+          "n": 10
+        },
+        "timeout_log": {
+          "min": 0.1,
+          "max": 5.2,
+          "mean": 2.08,
+          "std": 1.9171,
+          "n": 10
+        }
+      }
+    }
+  },
+  "metadata_shortcuts": {
+    "duration_min": {
+      "DB_CONNECTION_POOL_EXHAUSTION": {
+        "min": 19.3,
+        "max": 50.1,
+        "mean": 34.92,
+        "std": 10.949,
+        "n": 10
+      },
+      "MEMORY_LEAK": {
+        "min": 19.7,
+        "max": 59.1,
+        "mean": 35.77,
+        "std": 12.8054,
+        "n": 10
+      },
+      "DOWNSTREAM_SERVICE_TIMEOUT": {
+        "min": 22.6,
+        "max": 46.7,
+        "mean": 33.95,
+        "std": 7.6263,
+        "n": 10
+      },
+      "NORMAL": {
+        "min": 7.5,
+        "max": 39.7,
+        "mean": 26.38,
+        "std": 12.3599,
+        "n": 5
+      }
+    },
+    "window_min": {
+      "DB_CONNECTION_POOL_EXHAUSTION": {
+        "min": 121.0,
+        "max": 207.0,
+        "mean": 164.1,
+        "std": 27.1721,
+        "n": 10
+      },
+      "MEMORY_LEAK": {
+        "min": 131.0,
+        "max": 219.0,
+        "mean": 167.3,
+        "std": 28.1664,
+        "n": 10
+      },
+      "DOWNSTREAM_SERVICE_TIMEOUT": {
+        "min": 109.0,
+        "max": 190.0,
+        "mean": 162.6,
+        "std": 25.583,
+        "n": 10
+      },
+      "NORMAL": {
+        "min": 135.0,
+        "max": 176.0,
+        "mean": 153.8,
+        "std": 16.9912,
+        "n": 5
+      }
+    },
+    "minutes_before_start_in_window": {
+      "DB_CONNECTION_POOL_EXHAUSTION": {
+        "min": 66.1833,
+        "max": 121.2,
+        "mean": 98.0883,
+        "std": 20.8295,
+        "n": 10
+      },
+      "MEMORY_LEAK": {
+        "min": 71.6833,
+        "max": 128.85,
+        "mean": 104.9983,
+        "std": 19.5108,
+        "n": 10
+      },
+      "DOWNSTREAM_SERVICE_TIMEOUT": {
+        "min": 64.8833,
+        "max": 126.45,
+        "mean": 97.9867,
+        "std": 25.1847,
+        "n": 10
+      },
+      "NORMAL": {
+        "min": 70.5333,
+        "max": 118.9667,
+        "mean": 102.2167,
+        "std": 19.9212,
+        "n": 5
+      }
+    },
+    "severity_by_scenario": {
+      "DB_CONNECTION_POOL_EXHAUSTION": {
+        "CRITICAL": 4,
+        "HIGH": 4,
+        "MEDIUM": 2
+      },
+      "MEMORY_LEAK": {
+        "CRITICAL": 4,
+        "MEDIUM": 3,
+        "HIGH": 2,
+        "LOW": 1
+      },
+      "DOWNSTREAM_SERVICE_TIMEOUT": {
+        "MEDIUM": 5,
+        "HIGH": 3,
+        "CRITICAL": 2
+      },
+      "NORMAL": {
+        "LOW": 4,
+        "MEDIUM": 1
+      }
+    }
+  },
+  "variation": {
+    "DB_CONNECTION_POOL_EXHAUSTION": {
+      "start_dates": [
+        "2026-01-15",
+        "2026-03-05"
+      ],
+      "unique_start_times": 10,
+      "start_hours": [
+        6,
+        12,
+        14,
+        17,
+        19,
+        21
+      ],
+      "severity": {
+        "CRITICAL": 4,
+        "HIGH": 4,
+        "MEDIUM": 2
+      },
+      "reported_service": {
+        "orders-api": 4,
+        "recommendation-service": 3,
+        "payment-api": 2,
+        "inventory-service": 1
+      },
+      "root_cause_service": {
+        "recommendation-service": 3,
+        "orders-api": 3,
+        "inventory-service": 2,
+        "payment-api": 2
+      },
+      "variant": {
+        "connection_leak": 3,
+        "pool_misconfig": 3,
+        "slow_query": 2,
+        "traffic_surge": 2
+      },
+      "duration_min": {
+        "min": 19.3,
+        "max": 50.1,
+        "mean": 34.92,
+        "std": 10.949,
+        "cv": 0.3135
+      },
+      "window_min": {
+        "min": 121.0,
+        "max": 207.0,
+        "mean": 164.1,
+        "std": 27.1721,
+        "cv": 0.1656
+      },
+      "fault_offset_min": {
+        "min": 56.7333,
+        "max": 115.8833,
+        "mean": 89.19,
+        "std": 21.5266,
+        "cv": 0.2414
+      },
+      "alert_lag_min": {
+        "min": 4.6167,
+        "max": 15.75,
+        "mean": 8.8983,
+        "std": 4.0122,
+        "cv": 0.4509
+      },
+      "base_cpu_usage": {
+        "min": 14.21,
+        "max": 46.6,
+        "mean": 30.077,
+        "std": 10.5097,
+        "cv": 0.3494
+      },
+      "base_memory_usage": {
+        "min": 28.94,
+        "max": 58.17,
+        "mean": 44.863,
+        "std": 8.8157,
+        "cv": 0.1965
+      },
+      "base_request_rate": {
+        "min": 37.89,
+        "max": 173.47,
+        "mean": 115.357,
+        "std": 41.3252,
+        "cv": 0.3582
+      },
+      "base_latency_ms": {
+        "min": 18.4,
+        "max": 193.4,
+        "mean": 106.7,
+        "std": 61.1148,
+        "cv": 0.5728
+      },
+      "latency_ratio": {
+        "min": 29.5747,
+        "max": 325.5193,
+        "mean": 73.3755,
+        "std": 89.3763,
+        "cv": 1.2181
+      },
+      "error_delta": {
+        "min": 2.635,
+        "max": 48.194,
+        "mean": 22.0984,
+        "std": 16.6462,
+        "cv": 0.7533
+      },
+      "peak_latency_ms": {
+        "min": 827.8,
+        "max": 27018.1,
+        "mean": 7118.58,
+        "std": 7780.3864,
+        "cv": 1.093
+      },
+      "peak_error_rate": {
+        "min": 3.163,
+        "max": 48.304,
+        "mean": 22.4748,
+        "std": 16.5556,
+        "cv": 0.7366
+      },
+      "log_records": {
+        "min": 2458.0,
+        "max": 4297.0,
+        "mean": 3277.6,
+        "std": 536.2624,
+        "cv": 0.1636
+      }
+    },
+    "MEMORY_LEAK": {
+      "start_dates": [
+        "2026-01-19",
+        "2026-03-14"
+      ],
+      "unique_start_times": 10,
+      "start_hours": [
+        7,
+        11,
+        12,
+        13,
+        15,
+        18,
+        21
+      ],
+      "severity": {
+        "CRITICAL": 4,
+        "MEDIUM": 3,
+        "HIGH": 2,
+        "LOW": 1
+      },
+      "reported_service": {
+        "recommendation-service": 3,
+        "inventory-service": 2,
+        "api-gateway": 2,
+        "orders-api": 2,
+        "payment-api": 1
+      },
+      "root_cause_service": {
+        "orders-api": 3,
+        "recommendation-service": 3,
+        "inventory-service": 2,
+        "payment-api": 2
+      },
+      "variant": {
+        "library_regression": 3,
+        "listener_leak": 3,
+        "session_retention": 2,
+        "unbounded_cache": 2
+      },
+      "duration_min": {
+        "min": 19.7,
+        "max": 59.1,
+        "mean": 35.77,
+        "std": 12.8054,
+        "cv": 0.358
+      },
+      "window_min": {
+        "min": 131.0,
+        "max": 219.0,
+        "mean": 167.3,
+        "std": 28.1664,
+        "cv": 0.1684
+      },
+      "fault_offset_min": {
+        "min": 20.5333,
+        "max": 89.6167,
+        "mean": 43.1333,
+        "std": 21.9794,
+        "cv": 0.5096
+      },
+      "alert_lag_min": {
+        "min": 38.3167,
+        "max": 105.7833,
+        "mean": 61.865,
+        "std": 20.88,
+        "cv": 0.3375
+      },
+      "base_cpu_usage": {
+        "min": 19.92,
+        "max": 45.97,
+        "mean": 30.7015,
+        "std": 9.7199,
+        "cv": 0.3166
+      },
+      "base_memory_usage": {
+        "min": 28.645,
+        "max": 56.94,
+        "mean": 45.1325,
+        "std": 8.4075,
+        "cv": 0.1863
+      },
+      "base_request_rate": {
+        "min": 25.85,
+        "max": 210.27,
+        "mean": 120.418,
+        "std": 62.7727,
+        "cv": 0.5213
+      },
+      "base_latency_ms": {
+        "min": 28.65,
+        "max": 210.0,
+        "mean": 104.405,
+        "std": 61.1083,
+        "cv": 0.5853
+      },
+      "latency_ratio": {
+        "min": 2.9676,
+        "max": 11.901,
+        "mean": 6.7053,
+        "std": 2.4801,
+        "cv": 0.3699
+      },
+      "error_delta": {
+        "min": 0.209,
+        "max": 28.142,
+        "mean": 12.9949,
+        "std": 10.2154,
+        "cv": 0.7861
+      },
+      "peak_latency_ms": {
+        "min": 213.4,
+        "max": 2151.7,
+        "mean": 685.83,
+        "std": 569.8037,
+        "cv": 0.8308
+      },
+      "peak_error_rate": {
+        "min": 0.548,
+        "max": 28.254,
+        "mean": 13.2251,
+        "std": 10.234,
+        "cv": 0.7738
+      },
+      "log_records": {
+        "min": 1654.0,
+        "max": 3920.0,
+        "mean": 2587.6,
+        "std": 826.7158,
+        "cv": 0.3195
+      }
+    },
+    "DOWNSTREAM_SERVICE_TIMEOUT": {
+      "start_dates": [
+        "2026-01-09",
+        "2026-03-16"
+      ],
+      "unique_start_times": 10,
+      "start_hours": [
+        1,
+        8,
+        9,
+        11,
+        12,
+        14,
+        20
+      ],
+      "severity": {
+        "MEDIUM": 5,
+        "HIGH": 3,
+        "CRITICAL": 2
+      },
+      "reported_service": {
+        "orders-api": 4,
+        "payment-api": 2,
+        "api-gateway": 2,
+        "inventory-service": 2
+      },
+      "root_cause_service": {
+        "inventory-service": 3,
+        "acquirer-gateway": 2,
+        "recommendation-service": 2,
+        "warehouse-api": 2,
+        "payment-api": 1
+      },
+      "variant": {
+        "provider_degraded": 4,
+        "network_latency": 2,
+        "dependency_overloaded": 2,
+        "dependency_slow": 2
+      },
+      "duration_min": {
+        "min": 22.6,
+        "max": 46.7,
+        "mean": 33.95,
+        "std": 7.6263,
+        "cv": 0.2246
+      },
+      "window_min": {
+        "min": 109.0,
+        "max": 190.0,
+        "mean": 162.6,
+        "std": 25.583,
+        "cv": 0.1573
+      },
+      "fault_offset_min": {
+        "min": 54.6667,
+        "max": 124.5,
+        "mean": 93.6917,
+        "std": 26.1866,
+        "cv": 0.2795
+      },
+      "alert_lag_min": {
+        "min": 1.95,
+        "max": 10.2167,
+        "mean": 4.295,
+        "std": 2.9204,
+        "cv": 0.6799
+      },
+      "base_cpu_usage": {
+        "min": 14.24,
+        "max": 37.65,
+        "mean": 25.294,
+        "std": 9.0926,
+        "cv": 0.3595
+      },
+      "base_memory_usage": {
+        "min": 31.07,
+        "max": 56.21,
+        "mean": 44.71,
+        "std": 8.0437,
+        "cv": 0.1799
+      },
+      "base_request_rate": {
+        "min": 37.55,
+        "max": 359.21,
+        "mean": 132.236,
+        "std": 102.6585,
+        "cv": 0.7763
+      },
+      "base_latency_ms": {
+        "min": 19.8,
+        "max": 217.3,
+        "mean": 130.94,
+        "std": 68.619,
+        "cv": 0.524
+      },
+      "latency_ratio": {
+        "min": 2.1964,
+        "max": 68.8621,
+        "mean": 23.5274,
+        "std": 21.1343,
+        "cv": 0.8983
+      },
+      "error_delta": {
+        "min": 3.104,
+        "max": 40.474,
+        "mean": 13.1147,
+        "std": 11.4018,
+        "cv": 0.8694
+      },
+      "peak_latency_ms": {
+        "min": 408.1,
+        "max": 8274.6,
+        "mean": 2385.67,
+        "std": 2471.635,
+        "cv": 1.036
+      },
+      "peak_error_rate": {
+        "min": 3.252,
+        "max": 40.738,
+        "mean": 13.4453,
+        "std": 11.4047,
+        "cv": 0.8482
+      },
+      "log_records": {
+        "min": 1998.0,
+        "max": 4714.0,
+        "mean": 3021.0,
+        "std": 997.7333,
+        "cv": 0.3303
+      }
+    },
+    "NORMAL": {
+      "start_dates": [
+        "2026-02-10",
+        "2026-03-13"
+      ],
+      "unique_start_times": 5,
+      "start_hours": [
+        6,
+        9,
+        10,
+        15,
+        22
+      ],
+      "severity": {
+        "LOW": 4,
+        "MEDIUM": 1
+      },
+      "reported_service": {
+        "inventory-service": 2,
+        "payment-api": 1,
+        "api-gateway": 1,
+        "orders-api": 1
+      },
+      "root_cause_service": {},
+      "variant": {},
+      "duration_min": {
+        "min": 7.5,
+        "max": 39.7,
+        "mean": 26.38,
+        "std": 12.3599,
+        "cv": 0.4685
+      },
+      "window_min": {
+        "min": 135.0,
+        "max": 176.0,
+        "mean": 153.8,
+        "std": 16.9912,
+        "cv": 0.1105
+      },
+      "fault_offset_min": {
+        "min": 70.5333,
+        "max": 118.9667,
+        "mean": 102.2167,
+        "std": 19.9212,
+        "cv": 0.1949
+      },
+      "alert_lag_min": {
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "cv": null
+      },
+      "base_cpu_usage": {
+        "min": 17.97,
+        "max": 38.46,
+        "mean": 23.394,
+        "std": 8.5129,
+        "cv": 0.3639
+      },
+      "base_memory_usage": {
+        "min": 24.43,
+        "max": 59.67,
+        "mean": 41.156,
+        "std": 13.2168,
+        "cv": 0.3211
+      },
+      "base_request_rate": {
+        "min": 24.02,
+        "max": 215.62,
+        "mean": 116.222,
+        "std": 85.0685,
+        "cv": 0.7319
+      },
+      "base_latency_ms": {
+        "min": 22.7,
+        "max": 264.5,
+        "mean": 121.14,
+        "std": 102.1881,
+        "cv": 0.8436
+      },
+      "latency_ratio": {
+        "min": 1.2005,
+        "max": 6.0617,
+        "mean": 2.5557,
+        "std": 2.0124,
+        "cv": 0.7874
+      },
+      "error_delta": {
+        "min": 0.088,
+        "max": 0.531,
+        "mean": 0.291,
+        "std": 0.1927,
+        "cv": 0.6622
+      },
+      "peak_latency_ms": {
+        "min": 47.3,
+        "max": 461.5,
+        "mean": 243.82,
+        "std": 193.7599,
+        "cv": 0.7947
+      },
+      "peak_error_rate": {
+        "min": 0.172,
+        "max": 0.898,
+        "mean": 0.6048,
+        "std": 0.3254,
+        "cv": 0.5381
+      },
+      "log_records": {
+        "min": 1592.0,
+        "max": 2354.0,
+        "mean": 1878.0,
+        "std": 283.7358,
+        "cv": 0.1511
+      }
+    }
+  }
+}

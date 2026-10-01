@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-008",
+  "title": "api-gateway error-rate SLO burn",
+  "scenario": "MEMORY_LEAK",
+  "service": "api-gateway",
+  "severity": "MEDIUM",
+  "start_time": "2026-01-28T12:41:16",
+  "end_time": "2026-01-28T13:10:40",
+  "duration_minutes": 29.4,
+  "window_start": "2026-01-28T11:10:00",
+  "window_end": "2026-01-28T13:40:00",
+  "description": "SLO burn-rate alert: error budget burn on api-gateway; 2.0% of requests failing at peak and some requests timing out.",
+  "true_root_cause": "MEMORY_LEAK",
+  "root_cause_service": "orders-api",
+  "root_cause_variant": "library_regression",
+  "root_cause_detail": "A dependency upgrade shipped in orders-api v4.18.1 leaked buffers on every request.",
+  "fault_start_time": "2026-01-28T11:36:36",
+  "expected_symptoms": [
+    "orders-api memory_usage climbs gradually from ~49% to ~97% over ~64+ minutes",
+    "increasing GC / heap pressure logs on orders-api",
+    "orders-api p95 latency rises from ~145ms to ~903ms as memory grows",
+    "orders-api errors appear late, error rate up to ~5.4%",
+    "orders-api db_connection_utilization stays within normal range",
+    "deployment of orders-api v4.18.1 shortly before memory growth starts"
+  ],
+  "affected_services": [
+    "api-gateway",
+    "payment-api",
+    "orders-api"
+  ],
+  "resolution": "Rolled back orders-api to v4.18.0 and pinned the library version.",
+  "evidence_files": {
+    "logs": "logs/INC-008.jsonl",
+    "metrics": "metrics/INC-008.csv"
+  }
+}

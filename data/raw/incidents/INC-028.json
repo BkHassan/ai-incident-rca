@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-028",
+  "title": "Degraded checkout",
+  "scenario": "MEMORY_LEAK",
+  "service": "orders-api",
+  "severity": "MEDIUM",
+  "start_time": "2026-03-06T13:02:46",
+  "end_time": "2026-03-06T13:27:51",
+  "duration_minutes": 25.1,
+  "window_start": "2026-03-06T11:21:00",
+  "window_end": "2026-03-06T13:48:00",
+  "description": "Synthetic monitor: orders-api p95 latency reached 919ms (normally ~129ms) and error rate peaked at 1.5%.",
+  "true_root_cause": "MEMORY_LEAK",
+  "root_cause_service": "orders-api",
+  "root_cause_variant": "session_retention",
+  "root_cause_detail": "Per-request session objects in orders-api were retained by a global registry, so memory grew with traffic.",
+  "fault_start_time": "2026-03-06T12:05:51",
+  "expected_symptoms": [
+    "orders-api memory_usage climbs gradually from ~41% to ~100% over ~56+ minutes",
+    "increasing GC / heap pressure logs on orders-api",
+    "orders-api p95 latency rises from ~129ms to ~919ms as memory grows",
+    "orders-api errors appear late, error rate up to ~1.5%",
+    "orders-api db_connection_utilization stays within normal range",
+    "1 OOM kill / restart event(s) with memory drop and error spike"
+  ],
+  "affected_services": [
+    "orders-api",
+    "recommendation-service",
+    "api-gateway"
+  ],
+  "resolution": "Restarted the pods, removed the global registry reference and added a heap usage alert.",
+  "evidence_files": {
+    "logs": "logs/INC-028.jsonl",
+    "metrics": "metrics/INC-028.csv"
+  }
+}

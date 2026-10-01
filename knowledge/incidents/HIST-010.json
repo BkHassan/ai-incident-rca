@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-010",
+  "title": "Checkout failures: payment-api waiting on acquirer-gateway",
+  "occurred_at": "2025-12-09T14:05:58",
+  "service": "payment-api",
+  "root_cause_service": "payment-api",
+  "severity": "MEDIUM",
+  "duration_minutes": 22,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "downstream p95 much higher than in-process work",
+    "request latency well above the usual band",
+    "callers receiving 502/503/504 responses",
+    "circuit breaker or retry storms toward one dependency"
+  ],
+  "observed_signals": [
+    "caller CPU and memory stayed close to baseline",
+    "downstream_latency_ms on the caller rose toward the configured client timeout",
+    "db utilization rose only where the caller held connections during the wait",
+    "timeout logs named a specific dependency, not the local database"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-10m",
+      "event": "no local deploy on payment-api"
+    },
+    {
+      "relative_time": "-03m",
+      "event": "payment-api began retrying calls to acquirer-gateway"
+    },
+    {
+      "relative_time": "00m",
+      "event": "client-timeout errors named acquirer-gateway"
+    },
+    {
+      "relative_time": "00m",
+      "event": "customers reported failed payments"
+    },
+    {
+      "relative_time": "+16m",
+      "event": "fallback served cached responses until acquirer-gateway recovered"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "cross-zone latency to acquirer-gateway crossed the client deadline",
+    "no hedged requests were configured"
+  ],
+  "resolution": [
+    "investigated cross-zone RTT and packet loss toward acquirer-gateway",
+    "pinned traffic to the healthy zone while the path was repaired",
+    "recorded the timeout histogram in the incident ticket"
+  ],
+  "lessons_learned": [
+    "distinguish caller CPU/memory (flat) from outbound latency (up)",
+    "retry storms can look like a traffic surge on the caller"
+  ],
+  "tags": [
+    "timeouts",
+    "dependency",
+    "latency",
+    "5xx",
+    "acquirer"
+  ],
+  "affected_services": [
+    "payment-api",
+    "acquirer-gateway",
+    "orders-api"
+  ]
+}

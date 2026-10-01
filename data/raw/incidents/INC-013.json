@@ -1,0 +1,38 @@
+{
+  "incident_id": "INC-013",
+  "title": "Timeouts and 5xx on api-gateway",
+  "scenario": "MEMORY_LEAK",
+  "service": "api-gateway",
+  "severity": "MEDIUM",
+  "start_time": "2026-02-07T18:19:41",
+  "end_time": "2026-02-07T18:53:26",
+  "duration_minutes": 33.8,
+  "window_start": "2026-02-07T17:08:00",
+  "window_end": "2026-02-07T19:19:00",
+  "description": "Elevated latency on api-gateway (p95 825ms) with rising errors reported by consumers.",
+  "true_root_cause": "MEMORY_LEAK",
+  "root_cause_service": "payment-api",
+  "root_cause_variant": "listener_leak",
+  "root_cause_detail": "Event listeners registered per request in payment-api v2.28.0 were never removed.",
+  "fault_start_time": "2026-02-07T17:40:15",
+  "expected_symptoms": [
+    "payment-api memory_usage climbs gradually from ~57% to ~98% over ~39+ minutes",
+    "increasing GC / heap pressure logs on payment-api",
+    "payment-api p95 latency rises from ~181ms to ~2.2s as memory grows",
+    "payment-api errors appear late, error rate up to ~5.0%",
+    "payment-api db_connection_utilization stays within normal range",
+    "1 OOM kill / restart event(s) with memory drop and error spike",
+    "deployment of payment-api v2.28.0 shortly before memory growth starts"
+  ],
+  "affected_services": [
+    "api-gateway",
+    "recommendation-service",
+    "payment-api",
+    "orders-api"
+  ],
+  "resolution": "Rolled back payment-api to v2.27.0 and fixed listener deregistration.",
+  "evidence_files": {
+    "logs": "logs/INC-013.jsonl",
+    "metrics": "metrics/INC-013.csv"
+  }
+}

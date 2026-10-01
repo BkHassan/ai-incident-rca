@@ -1,0 +1,222 @@
+{
+  "generator": "scripts/generate_knowledge.py",
+  "seed": 7,
+  "count": 30,
+  "by_root_cause": {
+    "DB_CONNECTION_POOL_EXHAUSTION": 10,
+    "MEMORY_LEAK": 10,
+    "DOWNSTREAM_SERVICE_TIMEOUT": 10
+  },
+  "incidents": [
+    {
+      "incident_id": "HIST-001",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "payment-api",
+      "severity": "LOW",
+      "occurred_at": "2025-07-04T03:00:36"
+    },
+    {
+      "incident_id": "HIST-002",
+      "root_cause": "MEMORY_LEAK",
+      "service": "payment-api",
+      "severity": "MEDIUM",
+      "occurred_at": "2025-06-25T03:18:31"
+    },
+    {
+      "incident_id": "HIST-003",
+      "root_cause": "MEMORY_LEAK",
+      "service": "inventory-service",
+      "severity": "MEDIUM",
+      "occurred_at": "2025-10-10T10:33:09"
+    },
+    {
+      "incident_id": "HIST-004",
+      "root_cause": "MEMORY_LEAK",
+      "service": "orders-api",
+      "severity": "LOW",
+      "occurred_at": "2025-09-08T22:41:56"
+    },
+    {
+      "incident_id": "HIST-005",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "api-gateway",
+      "severity": "CRITICAL",
+      "occurred_at": "2025-09-01T00:41:22"
+    },
+    {
+      "incident_id": "HIST-006",
+      "root_cause": "MEMORY_LEAK",
+      "service": "inventory-service",
+      "severity": "LOW",
+      "occurred_at": "2025-10-28T03:55:25"
+    },
+    {
+      "incident_id": "HIST-007",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "inventory-service",
+      "severity": "MEDIUM",
+      "occurred_at": "2024-08-09T20:41:09"
+    },
+    {
+      "incident_id": "HIST-008",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "api-gateway",
+      "severity": "HIGH",
+      "occurred_at": "2024-08-07T17:55:23"
+    },
+    {
+      "incident_id": "HIST-009",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "payment-api",
+      "severity": "CRITICAL",
+      "occurred_at": "2025-11-05T00:27:30"
+    },
+    {
+      "incident_id": "HIST-010",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "payment-api",
+      "severity": "MEDIUM",
+      "occurred_at": "2025-12-09T14:05:58"
+    },
+    {
+      "incident_id": "HIST-011",
+      "root_cause": "MEMORY_LEAK",
+      "service": "recommendation-service",
+      "severity": "CRITICAL",
+      "occurred_at": "2024-03-17T22:00:51"
+    },
+    {
+      "incident_id": "HIST-012",
+      "root_cause": "MEMORY_LEAK",
+      "service": "orders-api",
+      "severity": "CRITICAL",
+      "occurred_at": "2025-07-28T21:55:26"
+    },
+    {
+      "incident_id": "HIST-013",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "inventory-service",
+      "severity": "LOW",
+      "occurred_at": "2025-10-22T03:05:32"
+    },
+    {
+      "incident_id": "HIST-014",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "orders-api",
+      "severity": "MEDIUM",
+      "occurred_at": "2025-01-28T00:05:13"
+    },
+    {
+      "incident_id": "HIST-015",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "orders-api",
+      "severity": "LOW",
+      "occurred_at": "2024-11-03T17:05:46"
+    },
+    {
+      "incident_id": "HIST-016",
+      "root_cause": "MEMORY_LEAK",
+      "service": "payment-api",
+      "severity": "HIGH",
+      "occurred_at": "2025-08-08T09:27:25"
+    },
+    {
+      "incident_id": "HIST-017",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "recommendation-service",
+      "severity": "HIGH",
+      "occurred_at": "2024-11-19T18:55:26"
+    },
+    {
+      "incident_id": "HIST-018",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "recommendation-service",
+      "severity": "LOW",
+      "occurred_at": "2025-04-04T18:48:15"
+    },
+    {
+      "incident_id": "HIST-019",
+      "root_cause": "MEMORY_LEAK",
+      "service": "orders-api",
+      "severity": "LOW",
+      "occurred_at": "2025-01-29T21:12:03"
+    },
+    {
+      "incident_id": "HIST-020",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "payment-api",
+      "severity": "HIGH",
+      "occurred_at": "2024-07-21T10:00:21"
+    },
+    {
+      "incident_id": "HIST-021",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "inventory-service",
+      "severity": "MEDIUM",
+      "occurred_at": "2025-10-15T23:33:46"
+    },
+    {
+      "incident_id": "HIST-022",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "payment-api",
+      "severity": "CRITICAL",
+      "occurred_at": "2025-05-09T03:00:40"
+    },
+    {
+      "incident_id": "HIST-023",
+      "root_cause": "MEMORY_LEAK",
+      "service": "recommendation-service",
+      "severity": "MEDIUM",
+      "occurred_at": "2025-03-08T09:27:49"
+    },
+    {
+      "incident_id": "HIST-024",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "orders-api",
+      "severity": "CRITICAL",
+      "occurred_at": "2025-09-02T22:55:18"
+    },
+    {
+      "incident_id": "HIST-025",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "orders-api",
+      "severity": "HIGH",
+      "occurred_at": "2024-06-12T07:55:17"
+    },
+    {
+      "incident_id": "HIST-026",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "orders-api",
+      "severity": "MEDIUM",
+      "occurred_at": "2025-10-05T10:33:53"
+    },
+    {
+      "incident_id": "HIST-027",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "orders-api",
+      "severity": "LOW",
+      "occurred_at": "2024-07-26T19:33:50"
+    },
+    {
+      "incident_id": "HIST-028",
+      "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+      "service": "recommendation-service",
+      "severity": "CRITICAL",
+      "occurred_at": "2024-10-18T14:27:47"
+    },
+    {
+      "incident_id": "HIST-029",
+      "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+      "service": "api-gateway",
+      "severity": "HIGH",
+      "occurred_at": "2024-09-06T22:05:11"
+    },
+    {
+      "incident_id": "HIST-030",
+      "root_cause": "MEMORY_LEAK",
+      "service": "recommendation-service",
+      "severity": "HIGH",
+      "occurred_at": "2024-09-27T20:18:24"
+    }
+  ]
+}

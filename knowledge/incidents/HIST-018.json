@@ -1,0 +1,73 @@
+{
+  "incident_id": "HIST-018",
+  "title": "SLO burn on recommendation-service with connection wait events",
+  "occurred_at": "2025-04-04T18:48:15",
+  "service": "recommendation-service",
+  "root_cause_service": "recommendation-service",
+  "severity": "LOW",
+  "duration_minutes": 37,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "callers receiving 502/503/504 responses",
+    "modest rise in CPU while requests queued",
+    "threads waiting to acquire a database connection",
+    "elevated p95 latency on the alerting service",
+    "connection-acquisition timeouts in service logs"
+  ],
+  "observed_signals": [
+    "latency jumped by more than 10x while CPU stayed only moderately higher",
+    "timeout-related WARN/ERROR rate on the service rose from near zero",
+    "connection wait time increased before error rate peaked",
+    "memory stayed near baseline",
+    "downstream_latency_ms on callers increased as they waited on recommendation-service"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-19m",
+      "event": "a config reload ran on recommendation-service"
+    },
+    {
+      "relative_time": "-06m",
+      "event": "p95 latency on recommendation-service began climbing"
+    },
+    {
+      "relative_time": "-02m",
+      "event": "pool stats showed a wait queue on recommendation-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx / error-rate alert fired on recommendation-service"
+    },
+    {
+      "relative_time": "+08m",
+      "event": "mitigation applied; latency and waits receded"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "a config reload halved max pool size",
+    "no alert existed on utilization before 5xx"
+  ],
+  "resolution": [
+    "reverted the pool-size config change that had shrunk max connections",
+    "required a review for pool settings in the next deploy",
+    "paged on utilization remaining above 90% for 5 minutes"
+  ],
+  "lessons_learned": [
+    "do not raise pool size without checking for leaks",
+    "alert on pool utilization and acquire timeouts, not only on 5xx"
+  ],
+  "tags": [
+    "postgres",
+    "5xx",
+    "pool",
+    "checkout"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "database",
+    "api-gateway",
+    "home-page clients"
+  ]
+}

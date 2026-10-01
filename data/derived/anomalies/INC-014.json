@@ -1,0 +1,941 @@
+{
+  "incident_id": "INC-014",
+  "detector": "rolling_zscore",
+  "detector_version": "1.0.0",
+  "config": {
+    "baseline_window": 15,
+    "min_baseline_points": 10,
+    "z_threshold": 3.0,
+    "drift_lag": 30,
+    "severity": {
+      "medium": 10.0,
+      "high": 50.0
+    },
+    "exclude_anomalies_from_baseline": true,
+    "absolute_threshold_severity": "MEDIUM",
+    "metrics": {
+      "cpu_usage": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.5,
+        "min_abs_deviation": 10.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": 90.0
+      },
+      "memory_usage": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.25,
+        "min_abs_deviation": 5.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": 90.0
+      },
+      "request_rate": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 1.0,
+        "min_abs_deviation": 0.0,
+        "min_rel_deviation": 0.3,
+        "absolute_threshold": null
+      },
+      "latency_ms": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 2.0,
+        "min_abs_deviation": 20.0,
+        "min_rel_deviation": 0.5,
+        "absolute_threshold": null
+      },
+      "error_rate": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.05,
+        "min_abs_deviation": 1.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": null
+      },
+      "db_connection_utilization": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 0.5,
+        "min_abs_deviation": 10.0,
+        "min_rel_deviation": 0.0,
+        "absolute_threshold": 90.0
+      },
+      "downstream_latency_ms": {
+        "enabled": true,
+        "directions": [
+          "up",
+          "down"
+        ],
+        "min_std": 2.0,
+        "min_abs_deviation": 20.0,
+        "min_rel_deviation": 0.5,
+        "absolute_threshold": null
+      }
+    },
+    "window_max_gap_minutes": 2.0
+  },
+  "series_analyzed": 39,
+  "observations_analyzed": 5421,
+  "points": [
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T08:43:00",
+      "service": "payment-api",
+      "metric_name": "latency_ms",
+      "value": 616.3,
+      "baseline_mean": 297.15,
+      "baseline_std": 13.369638073718463,
+      "baseline_points": 10,
+      "z_score": 23.871252029430263,
+      "deviation": 319.15,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T08:44:00",
+      "service": "api-gateway",
+      "metric_name": "latency_ms",
+      "value": 417.8,
+      "baseline_mean": 178.66363636363636,
+      "baseline_std": 12.549762764871115,
+      "baseline_points": 11,
+      "z_score": 19.055050530974682,
+      "deviation": 239.13636363636365,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:10:00",
+      "service": "payment-api",
+      "metric_name": "latency_ms",
+      "value": 655.7,
+      "baseline_mean": 254.93333333333334,
+      "baseline_std": 10.13957357983818,
+      "baseline_points": 15,
+      "z_score": 39.525002063554496,
+      "deviation": 400.7666666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:16:00",
+      "service": "recommendation-service",
+      "metric_name": "latency_ms",
+      "value": 164.1,
+      "baseline_mean": 97.42666666666668,
+      "baseline_std": 7.550446218286576,
+      "baseline_points": 15,
+      "z_score": 8.830383186076585,
+      "deviation": 66.67333333333332,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:43:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 37.58,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 5.7207667996049985,
+      "deviation": 10.658666666666665,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:44:00",
+      "service": "inventory-service",
+      "metric_name": "cpu_usage",
+      "value": 30.44,
+      "baseline_mean": 19.255999999999997,
+      "baseline_std": 1.9280923214410663,
+      "baseline_points": 15,
+      "z_score": 5.800552118604479,
+      "deviation": 11.184000000000005,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:44:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 46.14,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 10.31512792713366,
+      "deviation": 19.218666666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:44:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 127.68,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 6.087894459674941,
+      "deviation": 37.41000000000001,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:45:00",
+      "service": "inventory-service",
+      "metric_name": "cpu_usage",
+      "value": 28.55,
+      "baseline_mean": 17.462666666666667,
+      "baseline_std": 1.5188692535974941,
+      "baseline_points": 15,
+      "z_score": 7.299728602098306,
+      "deviation": 11.087333333333333,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "drift_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:45:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 47.52,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 11.05580764161842,
+      "deviation": 20.59866666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:45:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 126.98,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 5.973980369277387,
+      "deviation": 36.71000000000001,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:46:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 45.71,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 10.084336421895653,
+      "deviation": 18.788666666666668,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:46:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 127.05,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 5.985371778317142,
+      "deviation": 36.78,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:47:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 43.34,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 8.812299520932697,
+      "deviation": 16.41866666666667,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:47:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 124.4,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 5.554125578954978,
+      "deviation": 34.13000000000001,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:48:00",
+      "service": "inventory-service",
+      "metric_name": "cpu_usage",
+      "value": 29.05,
+      "baseline_mean": 17.827333333333335,
+      "baseline_std": 1.783429547916304,
+      "baseline_points": 15,
+      "z_score": 6.292744605346946,
+      "deviation": 11.222666666666665,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "drift_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:48:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 42.32,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 8.264840601530915,
+      "deviation": 15.398666666666667,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:48:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 122.47,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 5.240048158287438,
+      "deviation": 32.2,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:48:00",
+      "service": "recommendation-service",
+      "metric_name": "latency_ms",
+      "value": 158.6,
+      "baseline_mean": 100.48666666666666,
+      "baseline_std": 4.833050894867648,
+      "baseline_points": 15,
+      "z_score": 12.024150913669358,
+      "deviation": 58.11333333333333,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:48:00",
+      "service": "recommendation-service",
+      "metric_name": "memory_usage",
+      "value": 51.01,
+      "baseline_mean": 45.938,
+      "baseline_std": 0.3767947527690459,
+      "baseline_points": 15,
+      "z_score": 13.460909321921603,
+      "deviation": 5.071999999999996,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:49:00",
+      "service": "inventory-service",
+      "metric_name": "cpu_usage",
+      "value": 28.51,
+      "baseline_mean": 17.827333333333335,
+      "baseline_std": 1.783429547916304,
+      "baseline_points": 15,
+      "z_score": 5.989957203046185,
+      "deviation": 10.682666666666666,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "drift_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:49:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 44.23,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 9.289984264332286,
+      "deviation": 17.308666666666664,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:49:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 122.85,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 5.301887235931823,
+      "deviation": 32.58,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:49:00",
+      "service": "recommendation-service",
+      "metric_name": "latency_ms",
+      "value": 150.9,
+      "baseline_mean": 100.48666666666666,
+      "baseline_std": 4.833050894867648,
+      "baseline_points": 15,
+      "z_score": 10.430954366085546,
+      "deviation": 50.41333333333334,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:50:00",
+      "service": "inventory-service",
+      "metric_name": "cpu_usage",
+      "value": 31.31,
+      "baseline_mean": 20.032666666666668,
+      "baseline_std": 3.105319092567891,
+      "baseline_points": 15,
+      "z_score": 3.6316181999859256,
+      "deviation": 11.277333333333331,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:50:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 45.94,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 10.207783040976446,
+      "deviation": 19.018666666666665,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:50:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 128.55,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 6.229473400597615,
+      "deviation": 38.280000000000015,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:51:00",
+      "service": "inventory-service",
+      "metric_name": "cpu_usage",
+      "value": 29.7,
+      "baseline_mean": 17.827333333333335,
+      "baseline_std": 1.783429547916304,
+      "baseline_points": 15,
+      "z_score": 6.6572109229311955,
+      "deviation": 11.872666666666664,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "drift_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:51:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 45.74,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 10.100438154819237,
+      "deviation": 18.81866666666667,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:51:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 131.31,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 6.678620385593679,
+      "deviation": 41.040000000000006,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:52:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 46.11,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 10.299026194210077,
+      "deviation": 19.188666666666666,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:52:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 131.23,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 6.6656016324053855,
+      "deviation": 40.959999999999994,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:53:00",
+      "service": "inventory-service",
+      "metric_name": "db_connection_utilization",
+      "value": 43.75,
+      "baseline_mean": 26.921333333333333,
+      "baseline_std": 1.863153496731,
+      "baseline_points": 15,
+      "z_score": 9.032356537554978,
+      "deviation": 16.828666666666667,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T09:53:00",
+      "service": "inventory-service",
+      "metric_name": "request_rate",
+      "value": 123.64,
+      "baseline_mean": 90.27,
+      "baseline_std": 6.144981692405603,
+      "baseline_points": 15,
+      "z_score": 5.430447423666205,
+      "deviation": 33.370000000000005,
+      "direction": "up",
+      "severity": "LOW",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T10:00:00",
+      "service": "api-gateway",
+      "metric_name": "latency_ms",
+      "value": 358.5,
+      "baseline_mean": 175.05333333333334,
+      "baseline_std": 10.796154518204727,
+      "baseline_points": 15,
+      "z_score": 16.99185264135805,
+      "deviation": 183.44666666666666,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T10:05:00",
+      "service": "payment-api",
+      "metric_name": "latency_ms",
+      "value": 765.6,
+      "baseline_mean": 265.8,
+      "baseline_std": 18.624062776035586,
+      "baseline_points": 15,
+      "z_score": 26.836249749067374,
+      "deviation": 499.8,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T10:32:00",
+      "service": "api-gateway",
+      "metric_name": "latency_ms",
+      "value": 373.9,
+      "baseline_mean": 168.48666666666668,
+      "baseline_std": 9.452427251895728,
+      "baseline_points": 15,
+      "z_score": 21.73127894659403,
+      "deviation": 205.4133333333333,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T10:33:00",
+      "service": "orders-api",
+      "metric_name": "latency_ms",
+      "value": 258.3,
+      "baseline_mean": 125.97333333333333,
+      "baseline_std": 9.290199649297612,
+      "baseline_points": 15,
+      "z_score": 14.243683845553445,
+      "deviation": 132.32666666666668,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    },
+    {
+      "incident_id": "INC-014",
+      "timestamp": "2026-02-10T10:42:00",
+      "service": "api-gateway",
+      "metric_name": "latency_ms",
+      "value": 324.8,
+      "baseline_mean": 171.3,
+      "baseline_std": 9.804080783020916,
+      "baseline_points": 15,
+      "z_score": 15.65674573651384,
+      "deviation": 153.5,
+      "direction": "up",
+      "severity": "MEDIUM",
+      "detection_method": "rolling_zscore",
+      "absolute_threshold_exceeded": false
+    }
+  ],
+  "windows": [
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T08:43:00",
+      "end_time": "2026-02-10T08:44:00",
+      "duration_minutes": 1.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 2,
+      "affected_services": [
+        "api-gateway",
+        "payment-api"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "api-gateway:latency_ms",
+        "payment-api:latency_ms"
+      ],
+      "peak_deviation": 23.871252029430263,
+      "peak_z_score": 23.871252029430263,
+      "peak_metric": "latency_ms",
+      "peak_service": "payment-api",
+      "peak_timestamp": "2026-02-10T08:43:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T09:10:00",
+      "end_time": "2026-02-10T09:10:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "payment-api"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "payment-api:latency_ms"
+      ],
+      "peak_deviation": 39.525002063554496,
+      "peak_z_score": 39.525002063554496,
+      "peak_metric": "latency_ms",
+      "peak_service": "payment-api",
+      "peak_timestamp": "2026-02-10T09:10:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T09:16:00",
+      "end_time": "2026-02-10T09:16:00",
+      "duration_minutes": 0.0,
+      "severity": "LOW",
+      "anomaly_count": 1,
+      "affected_services": [
+        "recommendation-service"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "recommendation-service:latency_ms"
+      ],
+      "peak_deviation": 8.830383186076585,
+      "peak_z_score": 8.830383186076585,
+      "peak_metric": "latency_ms",
+      "peak_service": "recommendation-service",
+      "peak_timestamp": "2026-02-10T09:16:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T09:43:00",
+      "end_time": "2026-02-10T09:53:00",
+      "duration_minutes": 10.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 30,
+      "affected_services": [
+        "inventory-service",
+        "recommendation-service"
+      ],
+      "affected_metrics": [
+        "cpu_usage",
+        "db_connection_utilization",
+        "latency_ms",
+        "memory_usage",
+        "request_rate"
+      ],
+      "affected_series": [
+        "inventory-service:cpu_usage",
+        "inventory-service:db_connection_utilization",
+        "inventory-service:request_rate",
+        "recommendation-service:latency_ms",
+        "recommendation-service:memory_usage"
+      ],
+      "peak_deviation": 13.460909321921603,
+      "peak_z_score": 13.460909321921603,
+      "peak_metric": "memory_usage",
+      "peak_service": "recommendation-service",
+      "peak_timestamp": "2026-02-10T09:48:00",
+      "detection_methods": [
+        "drift_zscore",
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T10:00:00",
+      "end_time": "2026-02-10T10:00:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "api-gateway"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "api-gateway:latency_ms"
+      ],
+      "peak_deviation": 16.99185264135805,
+      "peak_z_score": 16.99185264135805,
+      "peak_metric": "latency_ms",
+      "peak_service": "api-gateway",
+      "peak_timestamp": "2026-02-10T10:00:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T10:05:00",
+      "end_time": "2026-02-10T10:05:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "payment-api"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "payment-api:latency_ms"
+      ],
+      "peak_deviation": 26.836249749067374,
+      "peak_z_score": 26.836249749067374,
+      "peak_metric": "latency_ms",
+      "peak_service": "payment-api",
+      "peak_timestamp": "2026-02-10T10:05:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T10:32:00",
+      "end_time": "2026-02-10T10:33:00",
+      "duration_minutes": 1.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 2,
+      "affected_services": [
+        "api-gateway",
+        "orders-api"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "api-gateway:latency_ms",
+        "orders-api:latency_ms"
+      ],
+      "peak_deviation": 21.73127894659403,
+      "peak_z_score": 21.73127894659403,
+      "peak_metric": "latency_ms",
+      "peak_service": "api-gateway",
+      "peak_timestamp": "2026-02-10T10:32:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    },
+    {
+      "incident_id": "INC-014",
+      "start_time": "2026-02-10T10:42:00",
+      "end_time": "2026-02-10T10:42:00",
+      "duration_minutes": 0.0,
+      "severity": "MEDIUM",
+      "anomaly_count": 1,
+      "affected_services": [
+        "api-gateway"
+      ],
+      "affected_metrics": [
+        "latency_ms"
+      ],
+      "affected_series": [
+        "api-gateway:latency_ms"
+      ],
+      "peak_deviation": 15.65674573651384,
+      "peak_z_score": 15.65674573651384,
+      "peak_metric": "latency_ms",
+      "peak_service": "api-gateway",
+      "peak_timestamp": "2026-02-10T10:42:00",
+      "detection_methods": [
+        "rolling_zscore"
+      ]
+    }
+  ]
+}

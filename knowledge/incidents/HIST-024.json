@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-024",
+  "title": "Checkout failures: orders-api waiting on payment-api",
+  "occurred_at": "2025-09-02T22:55:18",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "CRITICAL",
+  "duration_minutes": 35,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "elevated p95 latency on the alerting service",
+    "callers receiving 502/503/504 responses",
+    "circuit breaker or retry storms toward one dependency",
+    "read/connect timeouts naming a downstream host"
+  ],
+  "observed_signals": [
+    "retries increased request rate slightly without a user-traffic surge",
+    "db utilization rose only where the caller held connections during the wait",
+    "caller CPU and memory stayed close to baseline",
+    "downstream_latency_ms on the caller rose toward the configured client timeout"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-17m",
+      "event": "no local deploy on orders-api"
+    },
+    {
+      "relative_time": "-06m",
+      "event": "orders-api began retrying calls to payment-api"
+    },
+    {
+      "relative_time": "-03m",
+      "event": "client-timeout errors named payment-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx alert fired on orders-api"
+    },
+    {
+      "relative_time": "+16m",
+      "event": "fallback served cached responses until payment-api recovered"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "payment-api thread pool saturated",
+    "the caller had no fallback for that route"
+  ],
+  "resolution": [
+    "capped retries to stop amplifying load on payment-api",
+    "worked with the dependency owners on saturation of their pool",
+    "added synthetic checks against payment-api from the same region"
+  ],
+  "lessons_learned": [
+    "fallback and circuit breaking should be tested, not only documented",
+    "held DB connections during a slow downstream call are a side effect of waiting, not a saturated local pool"
+  ],
+  "tags": [
+    "circuit-breaker",
+    "outbound",
+    "errors",
+    "latency",
+    "payment"
+  ],
+  "affected_services": [
+    "orders-api",
+    "payment-api",
+    "api-gateway"
+  ]
+}

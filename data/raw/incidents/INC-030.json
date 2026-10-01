@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-030",
+  "title": "payment-api: elevated latency and errors",
+  "scenario": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "service": "payment-api",
+  "severity": "CRITICAL",
+  "start_time": "2026-03-08T14:23:11",
+  "end_time": "2026-03-08T14:53:44",
+  "duration_minutes": 30.6,
+  "window_start": "2026-03-08T12:17:00",
+  "window_end": "2026-03-08T15:26:00",
+  "description": "Synthetic monitor: payment-api p95 latency reached 8.3s (normally ~217ms) and error rate peaked at 40.7%.",
+  "true_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "root_cause_service": "acquirer-gateway",
+  "root_cause_variant": "provider_degraded",
+  "root_cause_detail": "External dependency acquirer-gateway degraded and responded slowly; payment-api calls exceeded the 8000ms client timeout.",
+  "fault_start_time": "2026-03-08T14:20:51",
+  "expected_symptoms": [
+    "payment-api downstream_latency_ms rises from ~223ms to ~8.3s (client timeout 8000ms)",
+    "timeout and retry logs on calls from payment-api to acquirer-gateway",
+    "payment-api p95 latency rises to ~8.3s, error rate up to ~40.7%",
+    "payment-api CPU and memory stay near baseline",
+    "payment-api db_connection_utilization moderately elevated (~79%) but not saturated"
+  ],
+  "affected_services": [
+    "payment-api",
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Failed over to the secondary acquirer-gateway region and tuned the payment-api timeout and retry budget.",
+  "evidence_files": {
+    "logs": "logs/INC-030.jsonl",
+    "metrics": "metrics/INC-030.csv"
+  }
+}

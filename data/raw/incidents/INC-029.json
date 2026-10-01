@@ -1,0 +1,25 @@
+{
+  "incident_id": "INC-029",
+  "title": "inventory-service: latency alert auto-resolved",
+  "scenario": "NORMAL",
+  "service": "inventory-service",
+  "severity": "MEDIUM",
+  "start_time": "2026-03-07T10:28:10",
+  "end_time": "2026-03-07T10:58:04",
+  "duration_minutes": 29.9,
+  "window_start": "2026-03-07T08:34:00",
+  "window_end": "2026-03-07T11:17:00",
+  "description": "Customer support escalation: brief latency alert on inventory-service (p95 up to 138ms); no customer reports so far.",
+  "true_root_cause": null,
+  "root_cause_service": null,
+  "root_cause_variant": null,
+  "root_cause_detail": "No underlying fault: benign dependency blip on inventory-service.",
+  "fault_start_time": null,
+  "expected_symptoms": [],
+  "affected_services": [],
+  "resolution": "No action required; the alert auto-resolved.",
+  "evidence_files": {
+    "logs": "logs/INC-029.jsonl",
+    "metrics": "metrics/INC-029.csv"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-015",
+  "title": "Intermittent order create \u2014 orders-api hitting client timeouts to inventory-service",
+  "occurred_at": "2024-11-03T17:05:46",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "LOW",
+  "duration_minutes": 22,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "read/connect timeouts naming a downstream host",
+    "increase in 5xx responses seen by callers",
+    "elevated p95 latency on the alerting service",
+    "circuit breaker or retry storms toward one dependency"
+  ],
+  "observed_signals": [
+    "caller CPU and memory stayed close to baseline",
+    "downstream_latency_ms on the caller rose toward the configured client timeout",
+    "timeout logs named a specific dependency, not the local database",
+    "db utilization rose only where the caller held connections during the wait"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-10m",
+      "event": "no local deploy on orders-api"
+    },
+    {
+      "relative_time": "-04m",
+      "event": "orders-api began retrying calls to inventory-service"
+    },
+    {
+      "relative_time": "-01m",
+      "event": "circuit breaker or retry logs referenced inventory-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "customers reported failed order create"
+    },
+    {
+      "relative_time": "+12m",
+      "event": "inventory-service recovered or was isolated; caller errors receded"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "cross-zone latency to inventory-service crossed the client deadline",
+    "no hedged requests were configured"
+  ],
+  "resolution": [
+    "investigated cross-zone RTT and packet loss toward inventory-service",
+    "pinned traffic to the healthy zone while the path was repaired",
+    "recorded the timeout histogram in the incident ticket"
+  ],
+  "lessons_learned": [
+    "distinguish caller CPU/memory (flat) from outbound latency (up)",
+    "retry storms can look like a traffic surge on the caller"
+  ],
+  "tags": [
+    "circuit-breaker",
+    "outbound",
+    "errors",
+    "latency",
+    "inventory"
+  ],
+  "affected_services": [
+    "orders-api",
+    "inventory-service",
+    "api-gateway"
+  ]
+}

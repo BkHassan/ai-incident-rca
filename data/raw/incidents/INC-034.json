@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-034",
+  "title": "Timeouts and 5xx on orders-api",
+  "scenario": "MEMORY_LEAK",
+  "service": "orders-api",
+  "severity": "CRITICAL",
+  "start_time": "2026-03-14T13:37:56",
+  "end_time": "2026-03-14T14:25:14",
+  "duration_minutes": 47.3,
+  "window_start": "2026-03-14T11:30:00",
+  "window_end": "2026-03-14T14:58:00",
+  "description": "Elevated latency on orders-api (p95 332ms) with rising errors reported by consumers.",
+  "true_root_cause": "MEMORY_LEAK",
+  "root_cause_service": "orders-api",
+  "root_cause_variant": "unbounded_cache",
+  "root_cause_detail": "An in-process cache in orders-api had no eviction policy or TTL and grew without bound.",
+  "fault_start_time": "2026-03-14T12:59:37",
+  "expected_symptoms": [
+    "orders-api memory_usage climbs gradually from ~39% to ~100% over ~38+ minutes",
+    "increasing GC / heap pressure logs on orders-api",
+    "orders-api p95 latency rises from ~98ms to ~332ms as memory grows",
+    "orders-api errors appear late, error rate up to ~16.8%",
+    "orders-api db_connection_utilization stays within normal range"
+  ],
+  "affected_services": [
+    "orders-api",
+    "payment-api",
+    "api-gateway"
+  ],
+  "resolution": "Restarted the pods to restore service and added a max size and TTL to the cache.",
+  "evidence_files": {
+    "logs": "logs/INC-034.jsonl",
+    "metrics": "metrics/INC-034.csv"
+  }
+}

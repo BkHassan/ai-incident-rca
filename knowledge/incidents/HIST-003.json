@@ -1,0 +1,69 @@
+{
+  "incident_id": "HIST-003",
+  "title": "Degraded order create: inventory-service latency tracked memory usage",
+  "occurred_at": "2025-10-10T10:33:09",
+  "service": "inventory-service",
+  "root_cause_service": "inventory-service",
+  "severity": "MEDIUM",
+  "duration_minutes": 45,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "occasional allocation failures or container restarts late in the incident",
+    "latency growing in step with memory, not with a sudden traffic spike",
+    "errors appearing late in the window after a long slow period"
+  ],
+  "observed_signals": [
+    "GC pause time and heap-used warnings increased with memory",
+    "CPU increased only moderately until GC became frequent",
+    "memory_usage rose smoothly over a long period rather than in a single jump",
+    "latency correlated with memory; errors arrived later"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-45m",
+      "event": "traffic was unremarkable at the start"
+    },
+    {
+      "relative_time": "-35m",
+      "event": "memory_usage on inventory-service began a near-linear climb"
+    },
+    {
+      "relative_time": "-06m",
+      "event": "p95 latency on inventory-service moved with memory"
+    },
+    {
+      "relative_time": "00m",
+      "event": "error-rate or latency alert fired on inventory-service"
+    },
+    {
+      "relative_time": "+13m",
+      "event": "a second climb started until the code fix landed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "server-side sessions accumulated for users who never logged out",
+    "the memory limit was close to the working set even when healthy"
+  ],
+  "resolution": [
+    "cleared server-side sessions that were never expired",
+    "set a max session map size",
+    "restarted pods that had already crossed 90% RSS"
+  ],
+  "lessons_learned": [
+    "page on sustained memory slope, not only on OOM",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "heap",
+    "5xx",
+    "restart",
+    "slo"
+  ],
+  "affected_services": [
+    "inventory-service",
+    "orders-api",
+    "api-gateway"
+  ]
+}

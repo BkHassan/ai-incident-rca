@@ -1,0 +1,25 @@
+{
+  "incident_id": "INC-014",
+  "title": "inventory-service: traffic anomaly alert auto-resolved",
+  "scenario": "NORMAL",
+  "service": "inventory-service",
+  "severity": "LOW",
+  "start_time": "2026-02-10T09:43:32",
+  "end_time": "2026-02-10T10:23:16",
+  "duration_minutes": 39.7,
+  "window_start": "2026-02-10T08:33:00",
+  "window_end": "2026-02-10T10:52:00",
+  "description": "Synthetic monitor: brief traffic anomaly alert on inventory-service (p95 up to 47ms); no customer reports so far.",
+  "true_root_cause": null,
+  "root_cause_service": null,
+  "root_cause_variant": null,
+  "root_cause_detail": "No underlying fault: benign traffic spike on inventory-service.",
+  "fault_start_time": null,
+  "expected_symptoms": [],
+  "affected_services": [],
+  "resolution": "No action required; the alert auto-resolved.",
+  "evidence_files": {
+    "logs": "logs/INC-014.jsonl",
+    "metrics": "metrics/INC-014.csv"
+  }
+}

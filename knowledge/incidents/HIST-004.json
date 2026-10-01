@@ -1,0 +1,70 @@
+{
+  "incident_id": "HIST-004",
+  "title": "Degraded stock lookups: orders-api latency tracked memory usage",
+  "occurred_at": "2025-09-08T22:41:56",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "LOW",
+  "duration_minutes": 102,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "elevated p95 latency on the alerting service",
+    "callers seeing timeouts and 5xx once the process was under heap pressure",
+    "RSS well above the usual band for that service",
+    "process memory usage climbing for tens of minutes"
+  ],
+  "observed_signals": [
+    "after a restart, memory dropped and then began climbing again",
+    "db_connection_utilization stayed well below saturation",
+    "CPU increased only moderately until GC became frequent",
+    "memory_usage rose smoothly over a long period rather than in a single jump"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-01h19m",
+      "event": "a deploy or flag change on orders-api that populated a new cache"
+    },
+    {
+      "relative_time": "-01h10m",
+      "event": "memory_usage on orders-api began a near-linear climb"
+    },
+    {
+      "relative_time": "-40m",
+      "event": "GC / heap warnings became frequent on orders-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "error-rate or latency alert fired on orders-api"
+    },
+    {
+      "relative_time": "+19m",
+      "event": "a second climb started until the code fix landed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "an in-process cache had no eviction policy",
+    "the growth was slow enough that a 15-minute baseline looked almost normal at first"
+  ],
+  "resolution": [
+    "restarted the affected deployment as immediate mitigation",
+    "identified an unbounded in-process cache with no TTL",
+    "shipped a hotfix with eviction and a heap-growth alert"
+  ],
+  "lessons_learned": [
+    "caches without TTL belong on the review checklist for every service",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "latency",
+    "allocation",
+    "process",
+    "errors"
+  ],
+  "affected_services": [
+    "orders-api",
+    "api-gateway",
+    "checkout clients"
+  ]
+}

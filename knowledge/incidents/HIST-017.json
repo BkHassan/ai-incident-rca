@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-017",
+  "title": "recommendation-service alerted on latency; callers reported failed requests",
+  "occurred_at": "2024-11-19T18:55:26",
+  "service": "recommendation-service",
+  "root_cause_service": "recommendation-service",
+  "severity": "HIGH",
+  "duration_minutes": 52,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "elevated 5xx rate on the alerting service",
+    "pool wait count climbing on the affected service",
+    "threads waiting to acquire a database connection",
+    "p95 and p99 latency climbing together"
+  ],
+  "observed_signals": [
+    "memory stayed near baseline",
+    "db_connection_utilization on the service rose from a mid-20s baseline toward saturation",
+    "latency jumped by more than 10x while CPU stayed only moderately higher",
+    "pool stats showed checked-out connections near max with a wait queue"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-17m",
+      "event": "a config reload ran on recommendation-service"
+    },
+    {
+      "relative_time": "-08m",
+      "event": "p95 latency on recommendation-service began climbing"
+    },
+    {
+      "relative_time": "-04m",
+      "event": "connection wait logs appeared on recommendation-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "SLO burn page for recommendation-service"
+    },
+    {
+      "relative_time": "+09m",
+      "event": "error rate returned toward baseline after the change"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "a config reload halved max pool size",
+    "no alert existed on utilization before 5xx"
+  ],
+  "resolution": [
+    "reverted the pool-size config change that had shrunk max connections",
+    "required a review for pool settings in the next deploy",
+    "paged on utilization remaining above 90% for 5 minutes"
+  ],
+  "lessons_learned": [
+    "do not raise pool size without checking for leaks",
+    "alert on pool utilization and acquire timeouts, not only on 5xx"
+  ],
+  "tags": [
+    "database",
+    "latency",
+    "connections",
+    "timeouts"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "database",
+    "api-gateway",
+    "home-page clients"
+  ]
+}

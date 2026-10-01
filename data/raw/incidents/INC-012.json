@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-012",
+  "title": "Degraded checkout",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "orders-api",
+  "severity": "HIGH",
+  "start_time": "2026-02-04T17:59:42",
+  "end_time": "2026-02-04T18:42:27",
+  "duration_minutes": 42.8,
+  "window_start": "2026-02-04T16:52:00",
+  "window_end": "2026-02-04T19:15:00",
+  "description": "PagerDuty alert: error budget burn on orders-api; 12.3% of requests failing at peak and some requests timing out.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "inventory-service",
+  "root_cause_variant": "traffic_surge",
+  "root_cause_detail": "A traffic surge (~2.1x normal) exceeded the capacity of the inventory-service connection pool (max 25); requests waited for connections until timeout.",
+  "fault_start_time": "2026-02-04T17:48:44",
+  "expected_symptoms": [
+    "inventory-service db_connection_utilization saturated at ~97% (baseline ~14%)",
+    "connection acquisition timeouts and database errors in inventory-service logs",
+    "inventory-service p95 latency rises from ~18ms to ~828ms",
+    "inventory-service error rate rises to ~11.0%",
+    "inventory-service memory stays near baseline; CPU at most moderately elevated",
+    "request_rate on inventory-service rises ~2.7x before saturation"
+  ],
+  "affected_services": [
+    "orders-api",
+    "inventory-service",
+    "api-gateway"
+  ],
+  "resolution": "Scaled out inventory-service, raised the pool size within the database max_connections budget and added rate limiting for campaign traffic.",
+  "evidence_files": {
+    "logs": "logs/INC-012.jsonl",
+    "metrics": "metrics/INC-012.csv"
+  }
+}

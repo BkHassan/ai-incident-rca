@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-026",
+  "title": "orders-api: elevated latency and errors",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "orders-api",
+  "severity": "CRITICAL",
+  "start_time": "2026-03-01T14:30:12",
+  "end_time": "2026-03-01T14:56:37",
+  "duration_minutes": 26.4,
+  "window_start": "2026-03-01T12:29:00",
+  "window_end": "2026-03-01T15:26:00",
+  "description": "Customers report failed or very slow checkouts. orders-api shows elevated latency and intermittent 5xx responses.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "orders-api",
+  "root_cause_variant": "pool_misconfig",
+  "root_cause_detail": "A configuration change reduced the orders-api connection pool from 10 to 3 connections; normal traffic exhausted the pool.",
+  "fault_start_time": "2026-03-01T14:24:53",
+  "expected_symptoms": [
+    "orders-api db_connection_utilization saturated at ~98% (baseline ~25%)",
+    "connection acquisition timeouts and database errors in orders-api logs",
+    "orders-api p95 latency rises from ~110ms to ~3.7s",
+    "orders-api error rate rises to ~25.9%",
+    "orders-api memory stays near baseline; CPU at most moderately elevated",
+    "configuration reload on orders-api shortly before saturation; database server connections drop"
+  ],
+  "affected_services": [
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Reverted the pool size configuration and added validation for datasource settings.",
+  "evidence_files": {
+    "logs": "logs/INC-026.jsonl",
+    "metrics": "metrics/INC-026.csv"
+  }
+}

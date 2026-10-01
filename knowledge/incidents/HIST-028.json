@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-028",
+  "title": "Degraded checkout \u2014 recommendation-service saturating outbound DB calls",
+  "occurred_at": "2024-10-18T14:27:47",
+  "service": "recommendation-service",
+  "root_cause_service": "recommendation-service",
+  "severity": "CRITICAL",
+  "duration_minutes": 61,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "threads waiting to acquire a database connection",
+    "callers receiving 502/503/504 responses",
+    "connection-acquisition timeouts in service logs",
+    "p95 and p99 latency climbing together"
+  ],
+  "observed_signals": [
+    "memory stayed near baseline",
+    "pool stats showed checked-out connections near max with a wait queue",
+    "connection wait time increased before error rate peaked",
+    "latency jumped by more than 10x while CPU stayed only moderately higher"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-13m",
+      "event": "traffic began rising on recommendation-service"
+    },
+    {
+      "relative_time": "-05m",
+      "event": "p95 latency on recommendation-service began climbing"
+    },
+    {
+      "relative_time": "00m",
+      "event": "connection wait logs appeared on recommendation-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "SLO burn page for recommendation-service"
+    },
+    {
+      "relative_time": "+14m",
+      "event": "error rate returned toward baseline after the change"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "organic traffic plus retries exceeded the configured pool",
+    "HPA lagged the traffic ramp"
+  ],
+  "resolution": [
+    "raised Hikari/Knex/SQLAlchemy max pool size after reviewing concurrency",
+    "killed sessions stuck in idle-in-transaction",
+    "added dashboards for wait_count and acquire timeout rate"
+  ],
+  "lessons_learned": [
+    "alert on pool utilization and acquire timeouts, not only on 5xx",
+    "treat connection-wait logs as a first-class signal during latency incidents"
+  ],
+  "tags": [
+    "latency",
+    "wait-events",
+    "slo",
+    "database"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "database",
+    "api-gateway",
+    "home-page clients"
+  ]
+}

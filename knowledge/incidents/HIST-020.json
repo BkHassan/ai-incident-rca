@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-020",
+  "title": "Degraded order create \u2014 payment-api saturating outbound DB calls",
+  "occurred_at": "2024-07-21T10:00:21",
+  "service": "payment-api",
+  "root_cause_service": "payment-api",
+  "severity": "HIGH",
+  "duration_minutes": 18,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "connection-acquisition timeouts in service logs",
+    "callers receiving 502/503/504 responses",
+    "p95 and p99 latency climbing together",
+    "pool wait count climbing on the affected service"
+  ],
+  "observed_signals": [
+    "connection wait time increased before error rate peaked",
+    "timeout-related WARN/ERROR rate on the service rose from near zero",
+    "latency jumped by more than 10x while CPU stayed only moderately higher",
+    "pool stats showed checked-out connections near max with a wait queue"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-18m",
+      "event": "a deploy finished on payment-api"
+    },
+    {
+      "relative_time": "-05m",
+      "event": "request duration histograms shifted right on payment-api"
+    },
+    {
+      "relative_time": "-01m",
+      "event": "connection wait logs appeared on payment-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx / error-rate alert fired on payment-api"
+    },
+    {
+      "relative_time": "+12m",
+      "event": "mitigation applied; latency and waits receded"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "a recent deploy introduced a path that did not close connections",
+    "concurrency was higher than the pool was sized for"
+  ],
+  "resolution": [
+    "rolled back the release that stopped returning connections to the pool",
+    "enabled pool leak detection and added a saturation alert at 80%",
+    "confirmed wait queue dropped after the rollback"
+  ],
+  "lessons_learned": [
+    "do not raise pool size without checking for leaks",
+    "alert on pool utilization and acquire timeouts, not only on 5xx"
+  ],
+  "tags": [
+    "latency",
+    "wait-events",
+    "slo",
+    "database"
+  ],
+  "affected_services": [
+    "payment-api",
+    "database",
+    "orders-api",
+    "api-gateway"
+  ]
+}

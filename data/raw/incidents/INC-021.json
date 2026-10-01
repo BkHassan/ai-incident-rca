@@ -1,0 +1,25 @@
+{
+  "incident_id": "INC-021",
+  "title": "Transient p95 latency alert on api-gateway",
+  "scenario": "NORMAL",
+  "service": "api-gateway",
+  "severity": "LOW",
+  "start_time": "2026-02-23T06:36:53",
+  "end_time": "2026-02-23T06:44:25",
+  "duration_minutes": 7.5,
+  "window_start": "2026-02-23T05:02:00",
+  "window_end": "2026-02-23T07:17:00",
+  "description": "PagerDuty alert: p95 latency alert on api-gateway fired for ~8 minutes and auto-resolved. Please confirm whether follow-up is needed.",
+  "true_root_cause": null,
+  "root_cause_service": null,
+  "root_cause_variant": null,
+  "root_cause_detail": "No underlying fault: benign latency blip on api-gateway.",
+  "fault_start_time": null,
+  "expected_symptoms": [],
+  "affected_services": [],
+  "resolution": "No action required; the alert auto-resolved.",
+  "evidence_files": {
+    "logs": "logs/INC-021.jsonl",
+    "metrics": "metrics/INC-021.csv"
+  }
+}

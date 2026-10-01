@@ -1,0 +1,34 @@
+{
+  "incident_id": "INC-025",
+  "title": "inventory-service: elevated latency and errors",
+  "scenario": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "service": "inventory-service",
+  "severity": "HIGH",
+  "start_time": "2026-02-27T08:40:53",
+  "end_time": "2026-02-27T09:14:18",
+  "duration_minutes": 33.4,
+  "window_start": "2026-02-27T06:42:00",
+  "window_end": "2026-02-27T09:52:00",
+  "description": "Customer support escalation: error budget burn on inventory-service; 17.5% of requests failing at peak and some requests timing out.",
+  "true_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "root_cause_service": "warehouse-api",
+  "root_cause_variant": "provider_degraded",
+  "root_cause_detail": "External dependency warehouse-api degraded and responded slowly; inventory-service calls exceeded the 1500ms client timeout.",
+  "fault_start_time": "2026-02-27T08:37:11",
+  "expected_symptoms": [
+    "inventory-service downstream_latency_ms rises from ~133ms to ~1.2s (client timeout 1500ms)",
+    "timeout and retry logs on calls from inventory-service to warehouse-api",
+    "inventory-service p95 latency rises to ~896ms, error rate up to ~17.5%",
+    "inventory-service CPU and memory stay near baseline"
+  ],
+  "affected_services": [
+    "inventory-service",
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Failed over to the secondary warehouse-api region and tuned the inventory-service timeout and retry budget.",
+  "evidence_files": {
+    "logs": "logs/INC-025.jsonl",
+    "metrics": "metrics/INC-025.csv"
+  }
+}

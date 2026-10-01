@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-015",
+  "title": "Timeouts and 5xx on recommendation-service",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "recommendation-service",
+  "severity": "CRITICAL",
+  "start_time": "2026-02-11T21:54:11",
+  "end_time": "2026-02-11T22:13:28",
+  "duration_minutes": 19.3,
+  "window_start": "2026-02-11T20:48:00",
+  "window_end": "2026-02-11T22:49:00",
+  "description": "Customers report missing or slow product recommendations on the home page. recommendation-service shows elevated latency and intermittent 5xx responses.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "recommendation-service",
+  "root_cause_variant": "pool_misconfig",
+  "root_cause_detail": "A configuration change reduced the recommendation-service connection pool from 15 to 5 connections; normal traffic exhausted the pool.",
+  "fault_start_time": "2026-02-11T21:49:04",
+  "expected_symptoms": [
+    "recommendation-service db_connection_utilization saturated at ~98% (baseline ~23%)",
+    "connection acquisition timeouts and database errors in recommendation-service logs",
+    "recommendation-service p95 latency rises from ~89ms to ~3.9s",
+    "recommendation-service error rate rises to ~48.3%",
+    "recommendation-service memory stays near baseline; CPU at most moderately elevated",
+    "configuration reload on recommendation-service shortly before saturation; database server connections drop"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "api-gateway"
+  ],
+  "resolution": "Reverted the pool size configuration and added validation for datasource settings.",
+  "evidence_files": {
+    "logs": "logs/INC-015.jsonl",
+    "metrics": "metrics/INC-015.csv"
+  }
+}

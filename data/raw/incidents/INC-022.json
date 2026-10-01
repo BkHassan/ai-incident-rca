@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-022",
+  "title": "Degraded checkout",
+  "scenario": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "service": "orders-api",
+  "severity": "HIGH",
+  "start_time": "2026-02-24T14:21:53",
+  "end_time": "2026-02-24T14:44:27",
+  "duration_minutes": 22.6,
+  "window_start": "2026-02-24T13:17:00",
+  "window_end": "2026-02-24T15:06:00",
+  "description": "Synthetic monitor: orders-api p95 latency reached 2.3s (normally ~127ms) and error rate peaked at 14.1%.",
+  "true_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "root_cause_service": "payment-api",
+  "root_cause_variant": "dependency_slow",
+  "root_cause_detail": "payment-api responded slowly (CPU throttling on its node pool), so orders-api calls timed out at 5000ms. The degradation was intermittent (flapping).",
+  "fault_start_time": "2026-02-24T14:11:40",
+  "expected_symptoms": [
+    "orders-api downstream_latency_ms rises from ~83ms to ~2.7s (client timeout 5000ms)",
+    "timeout and retry logs on calls from orders-api to payment-api",
+    "orders-api p95 latency rises to ~2.3s, error rate up to ~14.1%",
+    "orders-api CPU and memory stay near baseline",
+    "payment-api server-side latency elevated while its CPU and memory stay normal",
+    "intermittent / flapping latency pattern"
+  ],
+  "affected_services": [
+    "orders-api",
+    "payment-api",
+    "api-gateway"
+  ],
+  "resolution": "Moved payment-api pods off the degraded node pool and tuned the orders-api circuit breaker.",
+  "evidence_files": {
+    "logs": "logs/INC-022.jsonl",
+    "metrics": "metrics/INC-022.csv"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "incident_id": "HIST-014",
+  "title": "orders-api 5xx while inventory-service responses stalled",
+  "occurred_at": "2025-01-28T00:05:13",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "MEDIUM",
+  "duration_minutes": 22,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "elevated 5xx rate on the alerting service",
+    "elevated p95 latency on the alerting service",
+    "circuit breaker or retry storms toward one dependency",
+    "brief increase in held database connections while waiting on I/O",
+    "read/connect timeouts naming a downstream host"
+  ],
+  "observed_signals": [
+    "db utilization rose only where the caller held connections during the wait",
+    "retries increased request rate slightly without a user-traffic surge",
+    "error rate rose after outbound calls started timing out",
+    "timeout logs named a specific dependency, not the local database"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-08m",
+      "event": "no local deploy on orders-api"
+    },
+    {
+      "relative_time": "-02m",
+      "event": "orders-api began retrying calls to inventory-service"
+    },
+    {
+      "relative_time": "-01m",
+      "event": "circuit breaker or retry logs referenced inventory-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "customers reported failed stock lookups"
+    },
+    {
+      "relative_time": "+11m",
+      "event": "inventory-service recovered or was isolated; caller errors receded"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "inventory-service thread pool saturated",
+    "the caller had no fallback for that route"
+  ],
+  "resolution": [
+    "capped retries to stop amplifying load on inventory-service",
+    "worked with the dependency owners on saturation of their pool",
+    "added synthetic checks against inventory-service from the same region"
+  ],
+  "lessons_learned": [
+    "fallback and circuit breaking should be tested, not only documented",
+    "held DB connections during a slow downstream call are a side effect of waiting, not a saturated local pool"
+  ],
+  "tags": [
+    "retries",
+    "upstream",
+    "slo",
+    "p95",
+    "inventory"
+  ],
+  "affected_services": [
+    "orders-api",
+    "inventory-service",
+    "api-gateway"
+  ]
+}

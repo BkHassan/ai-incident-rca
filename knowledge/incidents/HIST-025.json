@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-025",
+  "title": "orders-api alerted on latency; callers reported failed requests",
+  "occurred_at": "2024-06-12T07:55:17",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "HIGH",
+  "duration_minutes": 37,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "connection-acquisition timeouts in service logs",
+    "pool wait count climbing on the affected service",
+    "callers receiving 502/503/504 responses",
+    "elevated p95 latency on the alerting service"
+  ],
+  "observed_signals": [
+    "latency jumped by more than 10x while CPU stayed only moderately higher",
+    "memory stayed near baseline",
+    "db_connection_utilization on the service rose from a mid-20s baseline toward saturation",
+    "timeout-related WARN/ERROR rate on the service rose from near zero"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-16m",
+      "event": "traffic began rising on orders-api"
+    },
+    {
+      "relative_time": "-05m",
+      "event": "p95 latency on orders-api began climbing"
+    },
+    {
+      "relative_time": "00m",
+      "event": "connection wait logs appeared on orders-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx / error-rate alert fired on orders-api"
+    },
+    {
+      "relative_time": "+10m",
+      "event": "error rate returned toward baseline after the change"
+    }
+  ],
+  "root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "contributing_factors": [
+    "organic traffic plus retries exceeded the configured pool",
+    "HPA lagged the traffic ramp"
+  ],
+  "resolution": [
+    "raised Hikari/Knex/SQLAlchemy max pool size after reviewing concurrency",
+    "killed sessions stuck in idle-in-transaction",
+    "added dashboards for wait_count and acquire timeout rate"
+  ],
+  "lessons_learned": [
+    "alert on pool utilization and acquire timeouts, not only on 5xx",
+    "treat connection-wait logs as a first-class signal during latency incidents"
+  ],
+  "tags": [
+    "latency",
+    "wait-events",
+    "slo",
+    "database"
+  ],
+  "affected_services": [
+    "orders-api",
+    "database",
+    "api-gateway",
+    "checkout clients"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-027",
+  "title": "Degraded recommendations",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "recommendation-service",
+  "severity": "MEDIUM",
+  "start_time": "2026-03-05T17:41:53",
+  "end_time": "2026-03-05T18:21:08",
+  "duration_minutes": 39.3,
+  "window_start": "2026-03-05T15:41:00",
+  "window_end": "2026-03-05T18:52:00",
+  "description": "Elevated latency on recommendation-service (p95 5.5s) with rising errors reported by consumers.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "recommendation-service",
+  "root_cause_variant": "traffic_surge",
+  "root_cause_detail": "A traffic surge (~1.7x normal) exceeded the capacity of the recommendation-service connection pool (max 15); requests waited for connections until timeout.",
+  "fault_start_time": "2026-03-05T17:34:24",
+  "expected_symptoms": [
+    "recommendation-service db_connection_utilization saturated at ~97% (baseline ~28%)",
+    "connection acquisition timeouts and database errors in recommendation-service logs",
+    "recommendation-service p95 latency rises from ~96ms to ~5.5s",
+    "recommendation-service error rate rises to ~4.8%",
+    "recommendation-service memory stays near baseline; CPU at most moderately elevated",
+    "request_rate on recommendation-service rises ~1.8x before saturation"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "payment-api",
+    "api-gateway"
+  ],
+  "resolution": "Scaled out recommendation-service, raised the pool size within the database max_connections budget and added rate limiting for campaign traffic.",
+  "evidence_files": {
+    "logs": "logs/INC-027.jsonl",
+    "metrics": "metrics/INC-027.csv"
+  }
+}

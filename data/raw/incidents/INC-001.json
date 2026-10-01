@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-001",
+  "title": "orders-api error-rate SLO burn",
+  "scenario": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "service": "orders-api",
+  "severity": "MEDIUM",
+  "start_time": "2026-01-09T01:01:41",
+  "end_time": "2026-01-09T01:48:24",
+  "duration_minutes": 46.7,
+  "window_start": "2026-01-08T23:33:00",
+  "window_end": "2026-01-09T02:17:00",
+  "description": "Customers report failed or very slow checkouts. orders-api shows elevated latency and intermittent 5xx responses.",
+  "true_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "root_cause_service": "inventory-service",
+  "root_cause_variant": "network_latency",
+  "root_cause_detail": "Cross-zone network degradation between orders-api and inventory-service pushed call latency beyond the 1500ms timeout; inventory-service itself was healthy.",
+  "fault_start_time": "2026-01-09T00:53:45",
+  "expected_symptoms": [
+    "orders-api downstream_latency_ms rises from ~81ms to ~1.6s (client timeout 1500ms)",
+    "timeout and retry logs on calls from orders-api to inventory-service",
+    "orders-api p95 latency rises to ~1.5s, error rate up to ~4.8%",
+    "orders-api CPU and memory stay near baseline",
+    "inventory-service server-side latency normal while caller-observed latency is high"
+  ],
+  "affected_services": [
+    "orders-api",
+    "payment-api",
+    "api-gateway",
+    "inventory-service"
+  ],
+  "resolution": "Routed traffic to same-zone endpoints until the cloud provider fixed the network issue.",
+  "evidence_files": {
+    "logs": "logs/INC-001.jsonl",
+    "metrics": "metrics/INC-001.csv"
+  }
+}

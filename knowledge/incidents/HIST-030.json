@@ -1,0 +1,69 @@
+{
+  "incident_id": "HIST-030",
+  "title": "Gradual latency climb on recommendation-service then 5xx",
+  "occurred_at": "2024-09-27T20:18:24",
+  "service": "recommendation-service",
+  "root_cause_service": "recommendation-service",
+  "severity": "HIGH",
+  "duration_minutes": 45,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "RSS well above the usual band for that service",
+    "latency growing in step with memory, not with a sudden traffic spike",
+    "increase in 5xx responses seen by callers"
+  ],
+  "observed_signals": [
+    "db_connection_utilization stayed well below saturation",
+    "CPU increased only moderately until GC became frequent",
+    "GC pause time and heap-used warnings increased with memory",
+    "after a restart, memory dropped and then began climbing again"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-45m",
+      "event": "a library bump shipped on recommendation-service"
+    },
+    {
+      "relative_time": "-40m",
+      "event": "memory_usage on recommendation-service began a near-linear climb"
+    },
+    {
+      "relative_time": "-10m",
+      "event": "p95 latency on recommendation-service moved with memory"
+    },
+    {
+      "relative_time": "00m",
+      "event": "recommendation-service started returning 5xx to callers"
+    },
+    {
+      "relative_time": "+14m",
+      "event": "restart or rollback dropped RSS; latency followed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "a library upgrade retained objects that should have been released",
+    "GC hid the problem until pauses became visible"
+  ],
+  "resolution": [
+    "rolled back the library version that retained extra objects",
+    "captured a heap dump before the second restart",
+    "added a slow memory-growth monitor (15-minute slope)"
+  ],
+  "lessons_learned": [
+    "heap dumps need to be taken before the second crash",
+    "page on sustained memory slope, not only on OOM"
+  ],
+  "tags": [
+    "memory",
+    "gc",
+    "latency",
+    "rss"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "api-gateway",
+    "home-page clients"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-021",
+  "title": "Timeouts calling warehouse-api from inventory-service",
+  "occurred_at": "2025-10-15T23:33:46",
+  "service": "inventory-service",
+  "root_cause_service": "inventory-service",
+  "severity": "MEDIUM",
+  "duration_minutes": 35,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "read/connect timeouts naming a downstream host",
+    "end-to-end latency dominated by waiting on a dependency",
+    "dependency health checks failing or degrading",
+    "elevated 5xx rate on the alerting service"
+  ],
+  "observed_signals": [
+    "downstream_latency_ms on the caller rose toward the configured client timeout",
+    "error rate rose after outbound calls started timing out",
+    "db utilization rose only where the caller held connections during the wait",
+    "timeout logs named a specific dependency, not the local database"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-16m",
+      "event": "synthetic checks to warehouse-api were still green"
+    },
+    {
+      "relative_time": "-06m",
+      "event": "outbound p95 from inventory-service toward warehouse-api rose"
+    },
+    {
+      "relative_time": "-04m",
+      "event": "circuit breaker or retry logs referenced warehouse-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "5xx alert fired on inventory-service"
+    },
+    {
+      "relative_time": "+07m",
+      "event": "warehouse-api recovered or was isolated; caller errors receded"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "warehouse-api was degraded in one region",
+    "inventory-service timeout was tight relative to the provider p99"
+  ],
+  "resolution": [
+    "confirmed warehouse-api latency on the provider status page and their dashboards",
+    "raised the client timeout only after proving the dependency was the bottleneck",
+    "enabled a circuit breaker and a cached fallback for non-critical reads"
+  ],
+  "lessons_learned": [
+    "distinguish caller CPU/memory (flat) from outbound latency (up)",
+    "fallback and circuit breaking should be tested, not only documented"
+  ],
+  "tags": [
+    "dependency",
+    "read-timeout",
+    "gateway",
+    "retries",
+    "warehouse"
+  ],
+  "affected_services": [
+    "inventory-service",
+    "warehouse-api",
+    "orders-api"
+  ]
+}

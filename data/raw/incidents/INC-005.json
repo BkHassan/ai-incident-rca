@@ -1,0 +1,37 @@
+{
+  "incident_id": "INC-005",
+  "title": "Degraded checkout",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "orders-api",
+  "severity": "CRITICAL",
+  "start_time": "2026-01-20T14:32:29",
+  "end_time": "2026-01-20T15:19:15",
+  "duration_minutes": 46.8,
+  "window_start": "2026-01-20T12:46:00",
+  "window_end": "2026-01-20T15:47:00",
+  "description": "Customer support escalation: error budget burn on orders-api; 38.3% of requests failing at peak and some requests timing out.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "orders-api",
+  "root_cause_variant": "slow_query",
+  "root_cause_detail": "A slow query on table carts (missing index plus lock contention) held connections for seconds, saturating the orders-api connection pool (max 15).",
+  "fault_start_time": "2026-01-20T14:24:42",
+  "expected_symptoms": [
+    "orders-api db_connection_utilization saturated at ~99% (baseline ~22%)",
+    "connection acquisition timeouts and database errors in orders-api logs",
+    "orders-api p95 latency rises from ~107ms to ~5.3s",
+    "orders-api error rate rises to ~38.3%",
+    "orders-api memory stays near baseline; CPU at most moderately elevated",
+    "database query latency and CPU elevated; slow statement and lock wait logs"
+  ],
+  "affected_services": [
+    "orders-api",
+    "database",
+    "payment-api",
+    "api-gateway"
+  ],
+  "resolution": "Terminated the long-running queries, added the missing index and set a statement_timeout for the offending query.",
+  "evidence_files": {
+    "logs": "logs/INC-005.jsonl",
+    "metrics": "metrics/INC-005.csv"
+  }
+}

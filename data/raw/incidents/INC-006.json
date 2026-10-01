@@ -1,0 +1,39 @@
+{
+  "incident_id": "INC-006",
+  "title": "inventory-service error-rate SLO burn",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "inventory-service",
+  "severity": "HIGH",
+  "start_time": "2026-01-23T19:03:14",
+  "end_time": "2026-01-23T19:47:20",
+  "duration_minutes": 44.1,
+  "window_start": "2026-01-23T17:32:00",
+  "window_end": "2026-01-23T20:07:00",
+  "description": "Elevated latency on inventory-service (p95 917ms) with rising errors reported by consumers.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "inventory-service",
+  "root_cause_variant": "slow_query",
+  "root_cause_detail": "A slow query on table stock_levels (missing index plus lock contention) held connections for seconds, saturating the inventory-service connection pool (max 50).",
+  "fault_start_time": "2026-01-23T18:58:37",
+  "expected_symptoms": [
+    "inventory-service db_connection_utilization saturated at ~98% (baseline ~36%)",
+    "connection acquisition timeouts and database errors in inventory-service logs",
+    "inventory-service p95 latency rises from ~18ms to ~917ms",
+    "inventory-service error rate rises to ~14.2%",
+    "inventory-service memory stays near baseline; CPU at most moderately elevated",
+    "database query latency and CPU elevated; slow statement and lock wait logs"
+  ],
+  "affected_services": [
+    "inventory-service",
+    "database",
+    "recommendation-service",
+    "payment-api",
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Terminated the long-running queries, added the missing index and set a statement_timeout for the offending query.",
+  "evidence_files": {
+    "logs": "logs/INC-006.jsonl",
+    "metrics": "metrics/INC-006.csv"
+  }
+}

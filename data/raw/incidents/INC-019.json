@@ -1,0 +1,25 @@
+{
+  "incident_id": "INC-019",
+  "title": "Transient latency alert on payment-api",
+  "scenario": "NORMAL",
+  "service": "payment-api",
+  "severity": "LOW",
+  "start_time": "2026-02-21T15:35:58",
+  "end_time": "2026-02-21T15:57:47",
+  "duration_minutes": 21.8,
+  "window_start": "2026-02-21T13:37:00",
+  "window_end": "2026-02-21T16:13:00",
+  "description": "Customer support escalation: brief latency alert on payment-api (p95 up to 462ms); no customer reports so far.",
+  "true_root_cause": null,
+  "root_cause_service": null,
+  "root_cause_variant": null,
+  "root_cause_detail": "No underlying fault: benign gc pause burst on payment-api.",
+  "fault_start_time": null,
+  "expected_symptoms": [],
+  "affected_services": [],
+  "resolution": "No action required; the alert auto-resolved.",
+  "evidence_files": {
+    "logs": "logs/INC-019.jsonl",
+    "metrics": "metrics/INC-019.csv"
+  }
+}

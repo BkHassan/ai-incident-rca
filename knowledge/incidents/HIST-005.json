@@ -1,0 +1,72 @@
+{
+  "incident_id": "HIST-005",
+  "title": "Synthetic monitor: api-gateway p95 vs recommendation-service deadline",
+  "occurred_at": "2025-09-01T00:41:22",
+  "service": "api-gateway",
+  "root_cause_service": "api-gateway",
+  "severity": "CRITICAL",
+  "duration_minutes": 35,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "elevated 5xx rate on the alerting service",
+    "circuit breaker or retry storms toward one dependency",
+    "gateway returned 502/504 for a subset of routes",
+    "read/connect timeouts naming a downstream host",
+    "elevated p95 latency on the alerting service"
+  ],
+  "observed_signals": [
+    "error rate rose after outbound calls started timing out",
+    "caller CPU and memory stayed close to baseline",
+    "retries increased request rate slightly without a user-traffic surge",
+    "timeout logs named a specific dependency, not the local database"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-07m",
+      "event": "a batch window started on recommendation-service"
+    },
+    {
+      "relative_time": "-02m",
+      "event": "outbound p95 from api-gateway toward recommendation-service rose"
+    },
+    {
+      "relative_time": "00m",
+      "event": "circuit breaker or retry logs referenced recommendation-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "customers reported failed order create"
+    },
+    {
+      "relative_time": "+08m",
+      "event": "fallback served cached responses until recommendation-service recovered"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "a batch job on recommendation-service consumed the dependency's capacity",
+    "caller retries multiplied load"
+  ],
+  "resolution": [
+    "paused the batch job that was overloading recommendation-service",
+    "spread the job and added a shared rate limit",
+    "documented the dependency SLO in the caller runbook"
+  ],
+  "lessons_learned": [
+    "retry storms can look like a traffic surge on the caller",
+    "held DB connections during a slow downstream call are a side effect of waiting, not a saturated local pool"
+  ],
+  "tags": [
+    "circuit-breaker",
+    "outbound",
+    "errors",
+    "latency",
+    "recommendation"
+  ],
+  "affected_services": [
+    "api-gateway",
+    "recommendation-service",
+    "mobile app"
+  ]
+}

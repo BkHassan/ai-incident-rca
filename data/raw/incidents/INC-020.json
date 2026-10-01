@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-020",
+  "title": "recommendation-service error-rate SLO burn",
+  "scenario": "MEMORY_LEAK",
+  "service": "recommendation-service",
+  "severity": "HIGH",
+  "start_time": "2026-02-22T07:13:11",
+  "end_time": "2026-02-22T07:47:24",
+  "duration_minutes": 34.2,
+  "window_start": "2026-02-22T05:40:00",
+  "window_end": "2026-02-22T08:07:00",
+  "description": "Elevated latency on recommendation-service (p95 582ms) with rising errors reported by consumers.",
+  "true_root_cause": "MEMORY_LEAK",
+  "root_cause_service": "recommendation-service",
+  "root_cause_variant": "listener_leak",
+  "root_cause_detail": "Event listeners registered per request in recommendation-service v2.5.0 were never removed.",
+  "fault_start_time": "2026-02-22T06:05:31",
+  "expected_symptoms": [
+    "recommendation-service memory_usage climbs gradually from ~48% to ~98% over ~67+ minutes",
+    "increasing GC / heap pressure logs on recommendation-service",
+    "recommendation-service p95 latency rises from ~91ms to ~582ms as memory grows",
+    "recommendation-service errors appear late, error rate up to ~12.5%",
+    "recommendation-service db_connection_utilization stays within normal range",
+    "deployment of recommendation-service v2.5.0 shortly before memory growth starts"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "orders-api"
+  ],
+  "resolution": "Rolled back recommendation-service to v2.4.11 and fixed listener deregistration.",
+  "evidence_files": {
+    "logs": "logs/INC-020.jsonl",
+    "metrics": "metrics/INC-020.csv"
+  }
+}

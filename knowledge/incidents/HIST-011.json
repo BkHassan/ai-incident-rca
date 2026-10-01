@@ -1,0 +1,72 @@
+{
+  "incident_id": "HIST-011",
+  "title": "Pager: recommendation-service p95 and memory both off baseline",
+  "occurred_at": "2024-03-17T22:00:51",
+  "service": "recommendation-service",
+  "root_cause_service": "recommendation-service",
+  "severity": "CRITICAL",
+  "duration_minutes": 28,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "occasional allocation failures or container restarts late in the incident",
+    "latency growing in step with memory, not with a sudden traffic spike",
+    "increase in 5xx responses seen by callers",
+    "timeouts that could be mistaken for a slow dependency",
+    "RSS well above the usual band for that service"
+  ],
+  "observed_signals": [
+    "CPU increased only moderately until GC became frequent",
+    "GC pause time and heap-used warnings increased with memory",
+    "after a restart, memory dropped and then began climbing again",
+    "memory_usage rose smoothly over a long period rather than in a single jump",
+    "db_connection_utilization stayed below 60% throughout"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-01h09m",
+      "event": "a deploy finished on recommendation-service"
+    },
+    {
+      "relative_time": "-55m",
+      "event": "memory_usage on recommendation-service began a near-linear climb"
+    },
+    {
+      "relative_time": "-26m",
+      "event": "GC / heap warnings became frequent on recommendation-service"
+    },
+    {
+      "relative_time": "00m",
+      "event": "recommendation-service started returning 5xx to callers"
+    },
+    {
+      "relative_time": "+21m",
+      "event": "restart or rollback dropped RSS; latency followed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "a library upgrade retained event listeners",
+    "no SLO existed on RSS slope"
+  ],
+  "resolution": [
+    "rolled back the library version that retained listeners",
+    "captured a heap dump before the second restart",
+    "added a slow memory-growth monitor (15-minute slope)"
+  ],
+  "lessons_learned": [
+    "heap dumps need to be taken before the second crash",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "heap",
+    "5xx",
+    "restart",
+    "slo"
+  ],
+  "affected_services": [
+    "recommendation-service",
+    "api-gateway",
+    "home-page clients"
+  ]
+}

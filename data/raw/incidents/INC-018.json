@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-018",
+  "title": "payment-api error-rate SLO burn",
+  "scenario": "MEMORY_LEAK",
+  "service": "payment-api",
+  "severity": "LOW",
+  "start_time": "2026-02-18T11:29:51",
+  "end_time": "2026-02-18T11:49:34",
+  "duration_minutes": 19.7,
+  "window_start": "2026-02-18T09:21:00",
+  "window_end": "2026-02-18T12:09:00",
+  "description": "Customer support escalation: payment-api p95 latency reached 623ms (normally ~209ms) and error rate peaked at 1.1%.",
+  "true_root_cause": "MEMORY_LEAK",
+  "root_cause_service": "payment-api",
+  "root_cause_variant": "library_regression",
+  "root_cause_detail": "A dependency upgrade shipped in payment-api v3.14.0 leaked buffers on every request.",
+  "fault_start_time": "2026-02-18T10:09:18",
+  "expected_symptoms": [
+    "payment-api memory_usage climbs gradually from ~52% to ~87% over ~80+ minutes",
+    "increasing GC / heap pressure logs on payment-api",
+    "payment-api p95 latency rises from ~209ms to ~623ms as memory grows",
+    "payment-api errors appear late, error rate up to ~1.1%",
+    "payment-api db_connection_utilization stays within normal range",
+    "deployment of payment-api v3.14.0 shortly before memory growth starts"
+  ],
+  "affected_services": [
+    "payment-api",
+    "orders-api"
+  ],
+  "resolution": "Rolled back payment-api to v3.13.9 and pinned the library version.",
+  "evidence_files": {
+    "logs": "logs/INC-018.jsonl",
+    "metrics": "metrics/INC-018.csv"
+  }
+}

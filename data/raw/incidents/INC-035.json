@@ -1,0 +1,38 @@
+{
+  "incident_id": "INC-035",
+  "title": "Timeouts and 5xx on orders-api",
+  "scenario": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "service": "orders-api",
+  "severity": "HIGH",
+  "start_time": "2026-03-16T20:22:14",
+  "end_time": "2026-03-16T20:54:45",
+  "duration_minutes": 32.5,
+  "window_start": "2026-03-16T19:10:00",
+  "window_end": "2026-03-16T21:30:00",
+  "description": "PagerDuty alert: orders-api p95 latency reached 1.8s (normally ~141ms) and error rate peaked at 18.9%.",
+  "true_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "root_cause_service": "inventory-service",
+  "root_cause_variant": "dependency_slow",
+  "root_cause_detail": "inventory-service responded slowly (CPU throttling on its node pool), so orders-api calls timed out at 2000ms. The degradation was intermittent (flapping).",
+  "fault_start_time": "2026-03-16T20:19:40",
+  "expected_symptoms": [
+    "orders-api downstream_latency_ms rises from ~90ms to ~2.1s (client timeout 2000ms)",
+    "timeout and retry logs on calls from orders-api to inventory-service",
+    "orders-api p95 latency rises to ~1.8s, error rate up to ~18.9%",
+    "orders-api CPU and memory stay near baseline",
+    "inventory-service server-side latency elevated while its CPU and memory stay normal",
+    "orders-api db_connection_utilization moderately elevated (~73%) but not saturated",
+    "intermittent / flapping latency pattern"
+  ],
+  "affected_services": [
+    "orders-api",
+    "inventory-service",
+    "payment-api",
+    "api-gateway"
+  ],
+  "resolution": "Moved inventory-service pods off the degraded node pool and tuned the orders-api circuit breaker.",
+  "evidence_files": {
+    "logs": "logs/INC-035.jsonl",
+    "metrics": "metrics/INC-035.csv"
+  }
+}

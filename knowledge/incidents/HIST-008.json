@@ -1,0 +1,71 @@
+{
+  "incident_id": "HIST-008",
+  "title": "Intermittent order create \u2014 api-gateway hitting client timeouts to orders-api",
+  "occurred_at": "2024-08-07T17:55:23",
+  "service": "api-gateway",
+  "root_cause_service": "api-gateway",
+  "severity": "HIGH",
+  "duration_minutes": 16,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "circuit breaker or retry storms toward one dependency",
+    "callers receiving 502/503/504 responses",
+    "downstream p95 much higher than in-process work",
+    "end-to-end latency dominated by waiting on a dependency"
+  ],
+  "observed_signals": [
+    "timeout logs named a specific dependency, not the local database",
+    "db utilization rose only where the caller held connections during the wait",
+    "retries increased request rate slightly without a user-traffic surge",
+    "caller CPU and memory stayed close to baseline"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-09m",
+      "event": "no local deploy on api-gateway"
+    },
+    {
+      "relative_time": "-04m",
+      "event": "api-gateway began retrying calls to orders-api"
+    },
+    {
+      "relative_time": "-01m",
+      "event": "circuit breaker or retry logs referenced orders-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "customers reported failed order create"
+    },
+    {
+      "relative_time": "+17m",
+      "event": "orders-api recovered or was isolated; caller errors receded"
+    }
+  ],
+  "root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "contributing_factors": [
+    "orders-api thread pool saturated",
+    "the caller had no fallback for that route"
+  ],
+  "resolution": [
+    "capped retries to stop amplifying load on orders-api",
+    "worked with the dependency owners on saturation of their pool",
+    "added synthetic checks against orders-api from the same region"
+  ],
+  "lessons_learned": [
+    "fallback and circuit breaking should be tested, not only documented",
+    "held DB connections during a slow downstream call are a side effect of waiting, not a saturated local pool"
+  ],
+  "tags": [
+    "timeouts",
+    "dependency",
+    "latency",
+    "5xx",
+    "orders"
+  ],
+  "affected_services": [
+    "api-gateway",
+    "orders-api",
+    "mobile app"
+  ]
+}

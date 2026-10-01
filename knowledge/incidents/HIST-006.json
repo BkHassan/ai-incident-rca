@@ -1,0 +1,70 @@
+{
+  "incident_id": "HIST-006",
+  "title": "Degraded order create: inventory-service latency tracked memory usage (Oct 2025)",
+  "occurred_at": "2025-10-28T03:55:25",
+  "service": "inventory-service",
+  "root_cause_service": "inventory-service",
+  "severity": "LOW",
+  "duration_minutes": 45,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "longer GC or heap-pressure warnings",
+    "process memory usage climbing for tens of minutes",
+    "elevated p95 latency on the alerting service",
+    "increase in 5xx responses seen by callers"
+  ],
+  "observed_signals": [
+    "memory_usage rose smoothly over a long period rather than in a single jump",
+    "db_connection_utilization stayed well below saturation",
+    "GC pause time and heap-used warnings increased with memory",
+    "after a restart, memory dropped and then began climbing again"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-01h17m",
+      "event": "a deploy finished on inventory-service"
+    },
+    {
+      "relative_time": "-01h10m",
+      "event": "memory_usage on inventory-service began a near-linear climb"
+    },
+    {
+      "relative_time": "-42m",
+      "event": "p95 latency on inventory-service moved with memory"
+    },
+    {
+      "relative_time": "00m",
+      "event": "inventory-service started returning 5xx to callers"
+    },
+    {
+      "relative_time": "+14m",
+      "event": "restart or rollback dropped RSS; latency followed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "a library upgrade retained event listeners",
+    "no SLO existed on RSS slope"
+  ],
+  "resolution": [
+    "rolled back the library version that retained listeners",
+    "captured a heap dump before the second restart",
+    "added a slow memory-growth monitor (15-minute slope)"
+  ],
+  "lessons_learned": [
+    "heap dumps need to be taken before the second crash",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "rss",
+    "timeouts",
+    "gc-pauses",
+    "stability"
+  ],
+  "affected_services": [
+    "inventory-service",
+    "orders-api",
+    "api-gateway"
+  ]
+}

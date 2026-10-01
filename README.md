@@ -1,124 +1,374 @@
 # AI-Assisted Root-Cause Analysis for Software Incidents
 
-## MVP
+An AI-assisted system for investigating software incidents and identifying probable root causes from application logs, metrics, incident context, historical incidents, and technical documentation.
 
-An AI-assisted system that helps software/SRE/operations engineers investigate application incidents by combining structured incident context, application logs, metrics, historical incidents, and technical documentation to identify and rank probable root causes with supporting evidence and generate a structured RCA report.
+The project focuses on one problem:
+
+> Software engineers spend significant time manually analyzing operational evidence to identify the root cause of incidents.
+
+The MVP aims to reduce this investigation effort by combining structured evidence analysis, historical incident retrieval, technical-document retrieval, and AI-assisted root-cause reasoning.
 
 ## Problem
 
-When software incidents occur, engineers often need to manually inspect logs, metrics, incident context, previous incidents, and technical documentation to identify the root cause. This investigation can be slow, repetitive, and difficult to scale.
+When a software incident occurs, engineers may need to inspect large volumes of logs and metrics, reconstruct the incident timeline, search previous incidents, and consult technical documentation before identifying a probable root cause.
 
-## User
+This manual investigation can be slow and difficult to scale.
 
-Primary user:
-- Software engineer
-- SRE / Site Reliability Engineer
-- Operations / application support engineer
+The goal of this project is to build an intelligent system that assists engineers during the root-cause analysis process.
 
-## MVP Input
+## Target User
 
-The MVP accepts:
+Software engineers, SRE engineers, and operations engineers responsible for investigating application incidents.
 
-1. **Incident context**
-   - incident ID
-   - title/summary
-   - severity
-   - affected service
-   - incident time window
+## MVP Scope
 
-2. **Application logs**
-   - timestamp
-   - service
-   - log level
-   - message
-   - event/error information
+The MVP focuses on three incident scenarios:
 
-3. **Metrics**
-   - timestamped operational measurements such as latency, error rate, memory usage, CPU usage, and database connection utilization
+### Scenario 01 — Database Connection Pool Exhaustion
 
-4. **Historical incidents**
-   - previous incidents
-   - symptoms
-   - confirmed root cause
-   - resolution information
+The application experiences increasing database connection usage, connection acquisition failures, latency degradation, and eventually request failures.
 
-5. **Technical documentation**
-   - troubleshooting guides
-   - runbooks
-   - technical documentation
+### Scenario 02 — Memory Leak
 
-## MVP Output
+Application memory usage increases progressively over time, leading to degraded performance, increased latency, and potential application instability.
 
-For each incident, the system produces:
+### Scenario 03 — Downstream Service Timeout
 
-- ranked probable root causes
-- confidence/score for each hypothesis
-- supporting evidence
-- contradicting evidence when available
-- relevant timeline/events
-- similar historical incidents
-- relevant technical documentation
-- recommended investigation/remediation steps
-- structured RCA report
+A dependency or downstream service becomes slow or unreachable, causing request timeouts, increased latency, and application errors.
 
-## MVP Scenarios
+## Input
 
-### SCENARIO_01 — DB_CONNECTION_POOL_EXHAUSTION
+The system works with four main categories of evidence:
 
-An application experiences database connection acquisition failures. Database connection utilization becomes saturated, application latency increases, and API errors increase.
+* Incident context
+* Application logs
+* Application/system metrics
+* Historical incidents
+* Technical documentation
 
-### SCENARIO_02 — MEMORY_LEAK
+## Output
 
-An application service shows progressively increasing memory usage, followed by latency degradation, garbage-collection pressure, and eventually application errors or restart behavior.
+For each investigated incident, the system produces:
 
-### SCENARIO_03 — DOWNSTREAM_TIMEOUT
+* Ranked probable root causes
+* Confidence for each hypothesis
+* Supporting evidence
+* Contradicting evidence when available
+* Relevant historical incidents
+* Relevant technical documentation
+* Incident timeline
+* Recommended investigation or remediation steps
+* Structured RCA report
 
-An application depends on a downstream service whose response time increases significantly. Timeout errors propagate to the application and eventually increase user-facing failures.
+## Core Investigation Flow
 
-## MVP Scope Boundaries
+```text
+Incident
+   ↓
+Data Ingestion
+   ↓
+Log / Metric / Event Parsing
+   ↓
+Relevant Evidence Extraction
+   ↓
+Temporal & Contextual Correlation
+   ↓
+Candidate Causes
+   ↓
+Historical Incident Retrieval
+   ↓
+Technical Evidence Retrieval
+   ↓
+AI-Assisted Investigation
+   ↓
+Evidence Verification
+   ↓
+Root-Cause Ranking
+   ↓
+RCA Report
+```
 
-The MVP does **not** attempt to:
+## MVP Objective
 
-- monitor real production infrastructure
-- ingest millions of events per second
-- automatically restart or modify production services
-- perform autonomous remediation
-- support every possible incident type
-- build a complete enterprise observability platform
-- guarantee a correct root cause
+Given an incident with its available evidence, the system should identify the correct root cause among a set of possible causes and provide evidence supporting the result.
 
-The MVP is a controlled diagnostic prototype using realistic synthetic incident data and a small knowledge base.
+The MVP will be evaluated using known synthetic incidents with predefined ground-truth root causes.
 
-## Core Success Criteria
+## Evaluation
 
-The MVP is considered successful when it can:
+The project will evaluate:
 
-1. ingest a defined incident and its evidence;
-2. detect/reconstruct relevant abnormal behavior and event relationships;
-3. retrieve relevant historical incidents and technical evidence;
-4. generate and rank root-cause hypotheses;
-5. attach evidence to the hypotheses;
-6. produce a structured RCA report;
-7. evaluate the diagnosis against known ground truth.
+* Top-1 root-cause accuracy
+* Top-3 root-cause recall
+* Evidence relevance
+* RCA generation latency
 
-## Initial Evaluation
+A deterministic baseline will also be implemented to compare rule-based diagnosis with AI-assisted diagnosis.
 
-The first benchmark will contain:
+## Technology Direction
 
-- 10 incidents for SCENARIO_01
-- 10 incidents for SCENARIO_02
-- 10 incidents for SCENARIO_03
-- 5 normal/no-failure cases
+Planned technologies:
 
-Total: **35 test cases**.
+* Python
+* Pandas / NumPy
+* Scikit-learn
+* FastAPI
+* Pydantic
+* ChromaDB
+* Gemini API
+* Next.js
+* React
+* TypeScript
+* Docker
 
-Primary metrics:
+The final stack may be adjusted during implementation based on MVP requirements.
 
-- Top-1 root-cause accuracy
-- Top-3 root-cause recall
-- evidence relevance / grounding quality
-- end-to-end RCA generation latency
+## Synthetic Dataset
+
+The benchmark is a reproducible synthetic dataset of software incidents with known ground truth. It is generated by a small simulator. No real distributed system is involved.
+
+### Generate and validate
+
+```bash
+python scripts/generate_logs.py          # builds the dataset, then runs the validator
+python scripts/validate_dataset.py       # re-validate an existing dataset
+```
+
+Generator options: `--seed` (default `42`), `--incidents-per-scenario` (default `10`), `--normal-cases` (default `5`), `--output-dir` (default `data/`), `--skip-validation`.
+Both scripts use only the Python standard library (Python 3.10+). Re-running is safe. The generator deletes only the files it owns (`INC-*` files and `generated/manifest.json` / `incidents_index.csv`) before writing new ones. With the same seed, the output is byte-identical.
+
+### Layout
+
+```text
+data/
+  raw/
+    incidents/INC-001.json   incident context + ground truth (one file per case)
+    logs/INC-001.jsonl       structured JSON logs, one record per line
+    metrics/INC-001.csv      1-minute metrics for every service
+  generated/
+    manifest.json            seed, counts, SHA-256 of every raw file
+    incidents_index.csv      one summary row per case
+```
+
+Logs are stored as JSON Lines (`.jsonl`) rather than one JSON array. This is the usual format for log data: files can be streamed and grepped line by line, and loaded with `pandas.read_json(path, lines=True)`.
+All files are linked by `incident_id`. Case IDs are shuffled across scenarios, so an ID does not reveal the scenario.
+
+Default contents (seed 42): 35 cases. There are 10 each of `DB_CONNECTION_POOL_EXHAUSTION`, `MEMORY_LEAK` and `DOWNSTREAM_SERVICE_TIMEOUT`, plus 5 `NORMAL` cases. Together they hold about 98k log records and about 34k metric rows, roughly 31 MB.
+
+### Simulated environment
+
+| Service | Stack (log style) | Calls |
+|---|---|---|
+| api-gateway | Envoy | orders-api, payment-api, recommendation-service |
+| orders-api | Python / FastAPI / SQLAlchemy | inventory-service, payment-api, database |
+| payment-api | Java / Spring / HikariCP | acquirer-gateway (external), database |
+| inventory-service | Go | warehouse-api (external), database |
+| recommendation-service | Node.js / Knex | database |
+| database | PostgreSQL | — |
+
+Each case is simulated minute by minute. A fault is injected into one component, and its effect spreads through the call graph as latency, timeouts and 5xx errors. Callers apply their own client timeouts, and the gateway can fall back to cached recommendations. Logs are sampled from the resulting state, so log volume follows request volume and error logs follow the error rate.
+
+### File schemas
+
+**Incident (`raw/incidents/INC-XXX.json`)**
+
+| Field | Meaning |
+|---|---|
+| `incident_id`, `title`, `description`, `service`, `severity`, `start_time`, `end_time`, `duration_minutes`, `window_start`, `window_end` | Incident context, i.e. what an on-call engineer would see. `service` is where the alert fired. `description` describes symptoms only. |
+| `scenario`, `true_root_cause`, `root_cause_service`, `root_cause_variant`, `root_cause_detail`, `fault_start_time`, `expected_symptoms`, `affected_services`, `resolution` | **Ground truth.** Use it for evaluation and for the historical-incident knowledge base. Do not feed it to the RCA engine for the incident being investigated. |
+| `evidence_files` | Relative paths of the linked logs and metrics. |
+
+`NORMAL` cases have `true_root_cause: null`. They represent alerts that auto-resolved (a latency blip, a traffic spike, a deploy restart, and so on) and have no underlying fault.
+
+**Logs (`raw/logs/INC-XXX.jsonl`)**: `timestamp` (UTC, millisecond precision), `service`, `host`, `level` (`INFO`/`WARN`/`ERROR`), `logger`, `message`, `trace_id` (shared across services for correlated requests; `null` for background events), `incident_id`. Records are sorted by timestamp.
+
+**Metrics (`raw/metrics/INC-XXX.csv`)**: `timestamp`, `incident_id`, `service`, `cpu_usage` (%), `memory_usage` (% of the memory limit), `request_rate` (req/s; queries/s for the database), `latency_ms` (p95), `error_rate` (% of failed requests), `db_connection_utilization` (% of the pool; for the database, % of `max_connections`), `downstream_latency_ms` (p95 of outbound calls). A value is left blank when the metric does not apply to a service.
+
+### Scenario signatures
+
+| Scenario | Variants | Main evidence |
+|---|---|---|
+| `DB_CONNECTION_POOL_EXHAUSTION` | connection leak after a deploy, slow query / lock contention, traffic surge, pool-size misconfiguration | Pool utilization saturates, then connection-wait latency, then acquisition timeouts and 5xx; pool-stats logs show waiting requests. CPU is stable or moderately up and memory is flat. Upstream callers see timeouts. |
+| `MEMORY_LEAK` | unbounded cache, session retention, library regression after a deploy, listener leak | Memory climbs gradually over 35–110 minutes before symptoms. GC/heap-pressure warnings rise, latency grows with memory pressure, and errors come late. There may be OOM kills with sawtooth restarts. The case is mitigated by a rollback, restart or hotfix. |
+| `DOWNSTREAM_SERVICE_TIMEOUT` | external provider degraded, slow internal dependency, cross-zone network latency, dependency overloaded by a batch job | Caller downstream latency rises and is capped at the client timeout. The caller logs timeouts, retries and circuit-breaker events. Caller CPU and memory stay normal; DB utilization may be moderately up but never saturated. The pattern is sometimes intermittent. |
+
+The data is deliberately not trivial. Several things make a single signal insufficient:
+
+- Exact error wording depends on the service's stack, and each incident uses a random subset of templates.
+- Generic messages such as `Database connection timeout`, `status=503` and read timeouts appear across scenarios.
+- Memory leaks and DB pool exhaustion both look like downstream timeouts from the caller's side.
+- The alert is sometimes raised on a caller rather than on the faulty service.
+- Unrelated deployments, feature flags, cron jobs, GC bursts, traffic spikes and isolated outliers add noise to every case.
+- Case layout does not give the answer away. Every case has 60–130 minutes of data before `start_time`, drawn from the same range for all scenarios. `NORMAL` alerts stay open for a similar time to real incidents. Severity is computed from observed impact with the same rule for every case.
+
+The validator confirms that no single log template identifies all incidents of any scenario.
+
+### Validation
+
+`scripts/validate_dataset.py` checks the following:
+
+- case counts and ground-truth consistency;
+- `incident_id` linkage between incidents, logs and metrics, with no orphan files;
+- valid and ordered timestamps that fall inside each case window;
+- required metric columns and value ranges;
+- presence of `INFO`, `WARN` and `ERROR` logs;
+- per-scenario metric signatures, and benign `NORMAL` cases;
+- variation across incidents (services, severity, duration, magnitudes, message sets);
+- no single-keyword shortcuts and no label leakage into logs;
+- manifest checksums, and no empty files.
+
+It exits non-zero if any check fails.
+
+## Ingestion
+
+`src/ingestion` turns the raw files into validated, immutable Pydantic objects, so later stages never deal with JSON, CSV or timestamp formats.
+
+```python
+import sys; sys.path.insert(0, "src")
+from ingestion import load_evidence_bundle, load_ground_truth, incident_path
+
+bundle = load_evidence_bundle("INC-011")   # context + logs + metrics; never ground truth
+truth = load_ground_truth(incident_path("INC-011"))   # evaluation only
+```
+
+| Module | Provides |
+|---|---|
+| `models.py` | `LogEvent`, `MetricPoint`, `IncidentContext`, `IncidentGroundTruth`, `IncidentEvidenceBundle`, `IncidentEvaluationRecord` |
+| `log_parser.py` | `load_logs(path)`: JSON Lines logs sorted by timestamp, levels normalized, and an `event_type` derived from each message |
+| `metric_loader.py` | `load_metrics(path)`: metric CSV rows sorted by timestamp, then service; blank non-applicable cells become `None` |
+| `incident_loader.py` | `load_incident_context`, `load_ground_truth`, `load_evidence_bundle`, `load_evaluation_record` |
+
+Rules the ingestion layer applies:
+
+- **Context and ground truth are separate.** Each metadata file is split into two fixed field lists, `CONTEXT_FIELDS` and `GROUND_TRUTH_FIELDS`. A field in neither list is rejected. `expected_symptoms` and `affected_services` are ground truth, as the schema table above says. `IncidentEvidenceBundle` has only `context`, `logs` and `metrics`.
+- **`event_type` describes the log line, not the cause.** Examples are `request_completed`, `db_timeout`, `downstream_timeout` and `gc_pause`. Fixed regular-expression rules derive it from the message. No event type names a scenario.
+- **Timestamps are naive `datetime` values in UTC wall-clock time**, exactly as stored. No timezone conversion is applied, and timestamps with a UTC offset are rejected so that naive and aware values are never mixed.
+- **Malformed data raises `IngestionError`.** The error lists every bad record in the file, with the file path, line or row number, incident ID and reason. Nothing is skipped silently.
+
+```bash
+python -m unittest discover -s tests -v   # unit and integration tests
+python scripts/test_ingestion.py          # one incident in detail, then all 35 incidents
+```
+
+The ingestion layer needs Python 3.11+ (it uses `enum.StrEnum`). Dependencies are listed in `requirements.txt`.
+
+## Anomaly detection
+
+`src/detection` scores each service's metric streams against a causal rolling baseline (past observations only). It emits `AnomalyPoint` and `AnomalyWindow` objects. It never reads ground truth.
+
+```python
+import sys; sys.path.insert(0, "src")
+from ingestion import load_evidence_bundle
+from detection import detect_incident, detect_anomalies, build_anomaly_windows
+
+report = detect_incident(load_evidence_bundle("INC-011"))
+# report.points / report.windows — no scenario or true_root_cause
+```
+
+| Module | Provides |
+|---|---|
+| `baseline.py` | Shifted rolling mean/std; the current value is not in its own baseline |
+| `statistical.py` | z-score, practical-significance floor, optional absolute ceiling, severity mapping |
+| `detector.py` | `detect_anomalies(metrics)` and `detect_incident(bundle)` |
+| `windowing.py` | `build_anomaly_windows(points)` |
+
+Defaults (`z_threshold=3`, 15-minute window, severity cuts at `|z|` 10 and 50) are MVP heuristics. They are documented in `docs/anomaly_detection.md` and are not claimed as industry standards.
+
+```bash
+python -m unittest tests.test_detection
+python scripts/detect_anomalies.py    # writes data/derived/anomalies/INC-XXX.json
+```
+
+## Temporal correlation
+
+`src/correlation` turns logs plus Day 5 anomaly windows into an observational timeline and citable evidence IDs. It records order and proximity. It does not claim that an earlier event produced a later one.
+
+```python
+import sys; sys.path.insert(0, "src")
+from ingestion import load_evidence_bundle
+from detection.models import IncidentAnomalyReport
+from correlation import correlate_incident
+
+bundle = load_evidence_bundle("INC-011")
+anomalies = IncidentAnomalyReport.model_validate_json(
+    open("data/derived/anomalies/INC-011.json", encoding="utf-8").read())
+timeline = correlate_incident(bundle, anomalies)
+# timeline.events, timeline.evidence_items, timeline.first_observed_event
+```
+
+| Module | Provides |
+|---|---|
+| `temporal.py` | Investigation / change / link windows from alert times only |
+| `evidence.py` | Relevance rules, collapse of high-volume logs, `LOG-` / `ANOM-` / `ANOMWIN-` ids |
+| `timeline.py` | `correlate_incident(bundle, anomaly_report)` |
+
+```bash
+python -m unittest tests.test_correlation
+python scripts/correlate_incidents.py    # writes data/derived/correlation/INC-XXX.json
+```
+
+See `docs/correlation.md`.
+
+## Historical knowledge base
+
+`knowledge/incidents` stores 30 synthetic postmortems (`HIST-001` … `HIST-030`) from 2024–2025, before the evaluation window. They are not copies of `data/raw` and do not share incident IDs.
+
+Ten records each for `DB_CONNECTION_POOL_EXHAUSTION`, `MEMORY_LEAK`, and `DOWNSTREAM_SERVICE_TIMEOUT`. Symptom text stays observational; the enum label is only in `root_cause`.
+
+```bash
+python scripts/generate_knowledge.py
+python -m unittest tests.test_knowledge
+```
+
+See `knowledge/README.md`.
+
+## Evidence retrieval
+
+`src/retrieval` turns observed incident evidence into a query, then searches two local Chroma collections:
+
+* `historical_incidents` — the 30 `HIST-*` postmortems
+* `technical_documents` — chunks of `knowledge/docs/`
+
+The query is built from incident context, anomaly windows, and the observational timeline. It does not read evaluation fields. Embeddings use the Google GenAI SDK (`client.models.embed_content`) and `gemini-embedding-001` by default (`RETRIEVAL_DOCUMENT` for the index, `RETRIEVAL_QUERY` for the query). Set `GEMINI_API_KEY` or `GOOGLE_API_KEY`. The model can be changed with `EMBEDDING_MODEL`.
+
+```bash
+python scripts/build_vector_index.py    # writes data/vectorstore/
+python -m unittest tests.test_retrieval
+python scripts/test_retrieval.py        # INC-011, INC-010, INC-002, INC-014
+```
+
+This milestone does not rank root causes or call a generative model.
+
+## Investigation API
+
+`src/investigation` builds a compact evidence context, asks Gemini for a structured RCA, and rejects any result that cites an evidence id that was not supplied. `confidence` is an uncalibrated ranking score, not a probability. Historical incidents are background: a past cause is not copied onto the current incident.
+
+`POST /api/incidents/investigate` takes `{"incident_id": "INC-011"}` and returns the validated `RCAResult`. The route calls `InvestigationService`. It does not contain the prompt.
+
+```bash
+uvicorn api.main:app --app-dir src
+python -m unittest tests.test_investigation tests.test_api
+python scripts/run_investigation.py
+```
+
+Set `GEMINI_API_KEY` (see `.env.example`), `GENAI_MODEL` (default `gemini-2.5-flash`), `EMBEDDING_MODEL`, and `CHROMA_PATH`. The Chroma store must already exist (`python scripts/build_vector_index.py`).
 
 ## Project Status
 
-Day 1 — Scope frozen.
+Day 1 — Scope definition and architecture design.
+
+Day 2 — Synthetic incident, log and metric dataset with ground truth (`scripts/generate_logs.py`, `scripts/validate_dataset.py`).
+
+Day 3 — Dataset exploration and quality analysis (`analysis/explore_dataset.py`, report in `docs/dataset_analysis.md`). Rerun it with `python analysis/explore_dataset.py` (needs pandas, numpy, matplotlib). This day also fixed three metadata shortcuts in the generator.
+
+Day 4 — Ingestion and normalization into validated Python objects (`src/ingestion`, `tests/test_ingestion.py`, `scripts/test_ingestion.py`).
+
+Day 5 — Explainable statistical anomaly detection (`src/detection`, `tests/test_detection.py`, `scripts/detect_anomalies.py`, `docs/anomaly_detection.md`).
+
+Day 6 — Temporal correlation into observational timelines and evidence IDs (`src/correlation`, `tests/test_correlation.py`, `scripts/correlate_incidents.py`, `docs/correlation.md`).
+
+Day 7 — Historical incident knowledge base (`knowledge/incidents/HIST-001.json` … `HIST-030.json`, `scripts/generate_knowledge.py`, `tests/test_knowledge.py`). Thirty closed postmortems, independent of the `INC-*` evaluation set.
+
+Day 8 — Evidence retrieval (`src/retrieval`, `knowledge/docs/`, `scripts/build_vector_index.py`, `scripts/test_retrieval.py`, `tests/test_retrieval.py`). Similar historical incidents and technical passages from observed evidence.
+
+Day 9–11 — RCA reasoning and API (`src/investigation`, `src/api`, `tests/test_investigation.py`, `tests/test_api.py`). Structured Gemini investigation with evidence-id checks, exposed as `POST /api/incidents/investigate`. No autonomous remediation and no frontend.

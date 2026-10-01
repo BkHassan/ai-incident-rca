@@ -1,0 +1,70 @@
+{
+  "incident_id": "HIST-002",
+  "title": "Degraded cart updates: payment-api latency tracked memory usage",
+  "occurred_at": "2025-06-25T03:18:31",
+  "service": "payment-api",
+  "root_cause_service": "payment-api",
+  "severity": "MEDIUM",
+  "duration_minutes": 102,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "longer GC or heap-pressure warnings",
+    "elevated p95 latency on the alerting service",
+    "increase in 5xx responses seen by callers",
+    "process memory usage climbing for tens of minutes"
+  ],
+  "observed_signals": [
+    "after a restart, memory dropped and then began climbing again",
+    "memory_usage rose smoothly over a long period rather than in a single jump",
+    "latency correlated with memory; errors arrived later",
+    "db_connection_utilization stayed well below saturation"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-01h01m",
+      "event": "a deploy or flag change on payment-api that populated a new cache"
+    },
+    {
+      "relative_time": "-55m",
+      "event": "memory_usage on payment-api began a near-linear climb"
+    },
+    {
+      "relative_time": "-22m",
+      "event": "GC / heap warnings became frequent on payment-api"
+    },
+    {
+      "relative_time": "00m",
+      "event": "payment-api started returning 5xx to callers"
+    },
+    {
+      "relative_time": "+13m",
+      "event": "restart or rollback dropped RSS; latency followed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "an in-process cache had no eviction policy",
+    "the growth was slow enough that a 15-minute baseline looked almost normal at first"
+  ],
+  "resolution": [
+    "restarted the affected deployment as immediate mitigation",
+    "identified an unbounded in-process cache with no TTL",
+    "shipped a hotfix with eviction and a heap-growth alert"
+  ],
+  "lessons_learned": [
+    "caches without TTL belong on the review checklist for every service",
+    "a restart that restores latency is mitigation, not a fix"
+  ],
+  "tags": [
+    "memory",
+    "gc",
+    "latency",
+    "rss"
+  ],
+  "affected_services": [
+    "payment-api",
+    "orders-api",
+    "api-gateway"
+  ]
+}

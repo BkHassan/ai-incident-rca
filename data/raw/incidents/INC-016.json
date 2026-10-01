@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-016",
+  "title": "api-gateway: elevated latency and errors",
+  "scenario": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "service": "api-gateway",
+  "severity": "MEDIUM",
+  "start_time": "2026-02-15T12:03:21",
+  "end_time": "2026-02-15T12:40:42",
+  "duration_minutes": 37.4,
+  "window_start": "2026-02-15T10:42:00",
+  "window_end": "2026-02-15T13:19:00",
+  "description": "SLO burn-rate alert: api-gateway p95 latency reached 408ms (normally ~186ms) and error rate peaked at 5.5%.",
+  "true_root_cause": "DOWNSTREAM_SERVICE_TIMEOUT",
+  "root_cause_service": "recommendation-service",
+  "root_cause_variant": "dependency_overloaded",
+  "root_cause_detail": "recommendation-service was overloaded by a batch job, saturating CPU and slowing responses; api-gateway calls timed out.",
+  "fault_start_time": "2026-02-15T12:01:05",
+  "expected_symptoms": [
+    "api-gateway downstream_latency_ms rises from ~116ms to ~950ms (client timeout 1000ms)",
+    "timeout and retry logs on calls from api-gateway to recommendation-service",
+    "api-gateway p95 latency rises to ~408ms, error rate up to ~5.5%",
+    "api-gateway CPU and memory stay near baseline",
+    "recommendation-service CPU near saturation (~78%) and server-side latency elevated"
+  ],
+  "affected_services": [
+    "api-gateway",
+    "recommendation-service",
+    "payment-api"
+  ],
+  "resolution": "Paused the batch job, scaled recommendation-service and moved the job to off-peak hours.",
+  "evidence_files": {
+    "logs": "logs/INC-016.jsonl",
+    "metrics": "metrics/INC-016.csv"
+  }
+}

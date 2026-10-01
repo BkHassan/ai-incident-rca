@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-007",
+  "title": "orders-api error-rate SLO burn",
+  "scenario": "DB_CONNECTION_POOL_EXHAUSTION",
+  "service": "orders-api",
+  "severity": "MEDIUM",
+  "start_time": "2026-01-27T12:33:56",
+  "end_time": "2026-01-27T13:24:05",
+  "duration_minutes": 50.1,
+  "window_start": "2026-01-27T10:40:00",
+  "window_end": "2026-01-27T14:07:00",
+  "description": "PagerDuty alert: orders-api p95 latency reached 5.0s (normally ~169ms) and error rate peaked at 3.2%.",
+  "true_root_cause": "DB_CONNECTION_POOL_EXHAUSTION",
+  "root_cause_service": "orders-api",
+  "root_cause_variant": "pool_misconfig",
+  "root_cause_detail": "A configuration change reduced the orders-api connection pool from 15 to 4 connections; normal traffic exhausted the pool.",
+  "fault_start_time": "2026-01-27T12:28:01",
+  "expected_symptoms": [
+    "orders-api db_connection_utilization saturated at ~100% (baseline ~24%)",
+    "connection acquisition timeouts and database errors in orders-api logs",
+    "orders-api p95 latency rises from ~169ms to ~5.0s",
+    "orders-api error rate rises to ~3.2%",
+    "orders-api memory stays near baseline; CPU at most moderately elevated",
+    "configuration reload on orders-api shortly before saturation; database server connections drop"
+  ],
+  "affected_services": [
+    "orders-api",
+    "api-gateway"
+  ],
+  "resolution": "Reverted the pool size configuration and added validation for datasource settings.",
+  "evidence_files": {
+    "logs": "logs/INC-007.jsonl",
+    "metrics": "metrics/INC-007.csv"
+  }
+}

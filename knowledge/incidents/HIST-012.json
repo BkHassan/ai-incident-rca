@@ -1,0 +1,70 @@
+{
+  "incident_id": "HIST-012",
+  "title": "Gradual latency climb on orders-api then 5xx",
+  "occurred_at": "2025-07-28T21:55:26",
+  "service": "orders-api",
+  "root_cause_service": "orders-api",
+  "severity": "CRITICAL",
+  "duration_minutes": 36,
+  "environment": "production",
+  "status": "resolved",
+  "symptoms": [
+    "occasional allocation failures or container restarts late in the incident",
+    "longer GC or heap-pressure warnings",
+    "request duration stretching over the afternoon",
+    "callers seeing timeouts and 5xx once the process was under heap pressure"
+  ],
+  "observed_signals": [
+    "latency correlated with memory; errors arrived later",
+    "GC pause time and heap-used warnings increased with memory",
+    "CPU increased only moderately until GC became frequent",
+    "db_connection_utilization stayed well below saturation"
+  ],
+  "timeline": [
+    {
+      "relative_time": "-49m",
+      "event": "a library bump shipped on orders-api"
+    },
+    {
+      "relative_time": "-40m",
+      "event": "memory_usage on orders-api began a near-linear climb"
+    },
+    {
+      "relative_time": "-08m",
+      "event": "p95 latency on orders-api moved with memory"
+    },
+    {
+      "relative_time": "00m",
+      "event": "error-rate or latency alert fired on orders-api"
+    },
+    {
+      "relative_time": "+11m",
+      "event": "a second climb started until the code fix landed"
+    }
+  ],
+  "root_cause": "MEMORY_LEAK",
+  "contributing_factors": [
+    "a library upgrade retained objects that should have been released",
+    "GC hid the problem until pauses became visible"
+  ],
+  "resolution": [
+    "rolled back the library version that retained extra objects",
+    "captured a heap dump before the second restart",
+    "added a slow memory-growth monitor (15-minute slope)"
+  ],
+  "lessons_learned": [
+    "heap dumps need to be taken before the second crash",
+    "page on sustained memory slope, not only on OOM"
+  ],
+  "tags": [
+    "rss",
+    "timeouts",
+    "gc-pauses",
+    "stability"
+  ],
+  "affected_services": [
+    "orders-api",
+    "api-gateway",
+    "checkout clients"
+  ]
+}

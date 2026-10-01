@@ -1,0 +1,502 @@
+{
+ "default (drift check, anomalies excluded from baseline)": {
+  "incidents": 35,
+  "points": 10365,
+  "windows": 230,
+  "observations": 222651,
+  "incidents_with_anomaly": 35,
+  "points_by_metric": {
+   "latency_ms": 3134,
+   "error_rate": 2077,
+   "downstream_latency_ms": 1952,
+   "db_connection_utilization": 1162,
+   "memory_usage": 972,
+   "cpu_usage": 666,
+   "request_rate": 402
+  },
+  "largest_metric_share": 0.302,
+  "points_by_severity": {
+   "LOW": 2473,
+   "MEDIUM": 4025,
+   "HIGH": 3867
+  },
+  "points_by_method": {
+   "rolling_zscore": 9192,
+   "drift_zscore": 1173
+  },
+  "points_after_alert_end_by_metric_direction": {
+   "latency_ms:up": 232,
+   "downstream_latency_ms:up": 142,
+   "error_rate:up": 101,
+   "db_connection_utilization:up": 89,
+   "memory_usage:down": 86,
+   "request_rate:up": 40,
+   "cpu_usage:up": 23,
+   "memory_usage:up": 6,
+   "cpu_usage:down": 2,
+   "db_connection_utilization:down": 2
+  },
+  "top_series": [
+   {
+    "incident_id": "INC-023",
+    "series": "inventory-service:memory_usage",
+    "points": 137,
+    "share_of_series": 0.626
+   },
+   {
+    "incident_id": "INC-018",
+    "series": "payment-api:memory_usage",
+    "points": 100,
+    "share_of_series": 0.595
+   },
+   {
+    "incident_id": "INC-010",
+    "series": "recommendation-service:memory_usage",
+    "points": 96,
+    "share_of_series": 0.527
+   },
+   {
+    "incident_id": "INC-020",
+    "series": "recommendation-service:memory_usage",
+    "points": 94,
+    "share_of_series": 0.639
+   },
+   {
+    "incident_id": "INC-004",
+    "series": "inventory-service:memory_usage",
+    "points": 88,
+    "share_of_series": 0.568
+   }
+  ],
+  "normal": {
+   "cases": 5,
+   "points": 120,
+   "windows": 36,
+   "high_points": 4,
+   "observations": 29991,
+   "points_in_alert_window": 70,
+   "per_case": {
+    "INC-014": {
+     "points": 39,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 11,
+      "db_connection_utilization": 11,
+      "cpu_usage": 6,
+      "request_rate": 10,
+      "memory_usage": 1
+     }
+    },
+    "INC-019": {
+     "points": 39,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 14,
+      "downstream_latency_ms": 6,
+      "memory_usage": 19
+     }
+    },
+    "INC-021": {
+     "points": 8,
+     "windows": 5,
+     "metrics": {
+      "latency_ms": 8
+     }
+    },
+    "INC-029": {
+     "points": 27,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 17,
+      "downstream_latency_ms": 10
+     }
+    },
+    "INC-033": {
+     "points": 7,
+     "windows": 7,
+     "metrics": {
+      "latency_ms": 7
+     }
+    }
+   },
+   "rate_per_1000_observations": 4.001
+  },
+  "failure_pre_fault": {
+   "points": 169,
+   "observations": 88725,
+   "rate_per_1000_observations": 1.905
+  },
+  "failure_fault_period": {
+   "cases": 30,
+   "with_window_in_fault_period": 30,
+   "alert_minutes": 1046,
+   "alert_minutes_with_anomaly": 1017,
+   "without_anomaly_in_fault_period": [],
+   "share_of_alert_minutes_with_anomaly": 0.972
+  },
+  "fault_period_points_by_scenario_and_metric": {
+   "DB_CONNECTION_POOL_EXHAUSTION": {
+    "latency_ms": 1113,
+    "db_connection_utilization": 986,
+    "error_rate": 902,
+    "downstream_latency_ms": 569,
+    "cpu_usage": 378,
+    "request_rate": 195,
+    "memory_usage": 7
+   },
+   "DOWNSTREAM_SERVICE_TIMEOUT": {
+    "latency_ms": 983,
+    "downstream_latency_ms": 829,
+    "error_rate": 704,
+    "request_rate": 94,
+    "cpu_usage": 82,
+    "db_connection_utilization": 61,
+    "memory_usage": 5
+   },
+   "MEMORY_LEAK": {
+    "memory_usage": 858,
+    "latency_ms": 632,
+    "downstream_latency_ms": 382,
+    "error_rate": 369,
+    "cpu_usage": 174,
+    "request_rate": 45,
+    "db_connection_utilization": 7
+   }
+  }
+ },
+ "no drift check (drift_lag=0)": {
+  "incidents": 35,
+  "points": 8714,
+  "windows": 232,
+  "observations": 222651,
+  "incidents_with_anomaly": 35,
+  "points_by_metric": {
+   "latency_ms": 2786,
+   "error_rate": 2001,
+   "downstream_latency_ms": 1727,
+   "db_connection_utilization": 799,
+   "memory_usage": 600,
+   "cpu_usage": 514,
+   "request_rate": 287
+  },
+  "largest_metric_share": 0.32,
+  "points_by_severity": {
+   "LOW": 1629,
+   "MEDIUM": 3252,
+   "HIGH": 3833
+  },
+  "points_by_method": {
+   "rolling_zscore": 8673,
+   "absolute_threshold": 41
+  },
+  "points_after_alert_end_by_metric_direction": {
+   "memory_usage:down": 255,
+   "latency_ms:up": 224,
+   "latency_ms:down": 149,
+   "downstream_latency_ms:up": 137,
+   "cpu_usage:down": 131,
+   "error_rate:up": 96,
+   "db_connection_utilization:up": 88,
+   "downstream_latency_ms:down": 74,
+   "error_rate:down": 42,
+   "db_connection_utilization:down": 37,
+   "cpu_usage:up": 18,
+   "request_rate:up": 10,
+   "memory_usage:up": 6
+  },
+  "top_series": [
+   {
+    "incident_id": "INC-034",
+    "series": "orders-api:memory_usage",
+    "points": 82,
+    "share_of_series": 0.394
+   },
+   {
+    "incident_id": "INC-023",
+    "series": "inventory-service:latency_ms",
+    "points": 75,
+    "share_of_series": 0.342
+   },
+   {
+    "incident_id": "INC-023",
+    "series": "inventory-service:memory_usage",
+    "points": 74,
+    "share_of_series": 0.338
+   },
+   {
+    "incident_id": "INC-010",
+    "series": "recommendation-service:memory_usage",
+    "points": 66,
+    "share_of_series": 0.363
+   },
+   {
+    "incident_id": "INC-001",
+    "series": "orders-api:downstream_latency_ms",
+    "points": 62,
+    "share_of_series": 0.378
+   }
+  ],
+  "normal": {
+   "cases": 5,
+   "points": 108,
+   "windows": 35,
+   "high_points": 4,
+   "observations": 29991,
+   "points_in_alert_window": 63,
+   "per_case": {
+    "INC-014": {
+     "points": 34,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 11,
+      "db_connection_utilization": 11,
+      "cpu_usage": 1,
+      "request_rate": 10,
+      "memory_usage": 1
+     }
+    },
+    "INC-019": {
+     "points": 33,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 12,
+      "downstream_latency_ms": 6,
+      "memory_usage": 15
+     }
+    },
+    "INC-021": {
+     "points": 7,
+     "windows": 4,
+     "metrics": {
+      "latency_ms": 7
+     }
+    },
+    "INC-029": {
+     "points": 27,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 17,
+      "downstream_latency_ms": 10
+     }
+    },
+    "INC-033": {
+     "points": 7,
+     "windows": 7,
+     "metrics": {
+      "latency_ms": 7
+     }
+    }
+   },
+   "rate_per_1000_observations": 3.601
+  },
+  "failure_pre_fault": {
+   "points": 152,
+   "observations": 88725,
+   "rate_per_1000_observations": 1.713
+  },
+  "failure_fault_period": {
+   "cases": 30,
+   "with_window_in_fault_period": 30,
+   "alert_minutes": 1046,
+   "alert_minutes_with_anomaly": 1006,
+   "without_anomaly_in_fault_period": [],
+   "share_of_alert_minutes_with_anomaly": 0.962
+  },
+  "fault_period_points_by_scenario_and_metric": {
+   "DB_CONNECTION_POOL_EXHAUSTION": {
+    "latency_ms": 964,
+    "error_rate": 852,
+    "db_connection_utilization": 594,
+    "downstream_latency_ms": 569,
+    "cpu_usage": 262,
+    "request_rate": 178,
+    "memory_usage": 3
+   },
+   "DOWNSTREAM_SERVICE_TIMEOUT": {
+    "latency_ms": 983,
+    "downstream_latency_ms": 829,
+    "error_rate": 702,
+    "cpu_usage": 79,
+    "request_rate": 76,
+    "db_connection_utilization": 56,
+    "memory_usage": 5
+   },
+   "MEMORY_LEAK": {
+    "memory_usage": 321,
+    "error_rate": 309,
+    "latency_ms": 296,
+    "downstream_latency_ms": 91,
+    "cpu_usage": 22,
+    "db_connection_utilization": 7,
+    "request_rate": 6
+   }
+  }
+ },
+ "plain shifted rolling baseline (no drift check, no exclusion)": {
+  "incidents": 35,
+  "points": 1889,
+  "windows": 272,
+  "observations": 222651,
+  "incidents_with_anomaly": 35,
+  "points_by_metric": {
+   "latency_ms": 551,
+   "db_connection_utilization": 499,
+   "error_rate": 279,
+   "memory_usage": 240,
+   "downstream_latency_ms": 228,
+   "cpu_usage": 56,
+   "request_rate": 36
+  },
+  "largest_metric_share": 0.292,
+  "points_by_severity": {
+   "LOW": 887,
+   "MEDIUM": 926,
+   "HIGH": 76
+  },
+  "points_by_method": {
+   "rolling_zscore": 1328,
+   "absolute_threshold": 561
+  },
+  "points_after_alert_end_by_metric_direction": {
+   "error_rate:down": 94,
+   "latency_ms:down": 92,
+   "db_connection_utilization:down": 74,
+   "downstream_latency_ms:down": 63,
+   "latency_ms:up": 51,
+   "cpu_usage:down": 27,
+   "memory_usage:down": 20,
+   "downstream_latency_ms:up": 8,
+   "request_rate:down": 7,
+   "memory_usage:up": 4,
+   "error_rate:up": 2,
+   "db_connection_utilization:up": 1
+  },
+  "top_series": [
+   {
+    "incident_id": "INC-007",
+    "series": "orders-api:db_connection_utilization",
+    "points": 62,
+    "share_of_series": 0.3
+   },
+   {
+    "incident_id": "INC-005",
+    "series": "orders-api:db_connection_utilization",
+    "points": 58,
+    "share_of_series": 0.32
+   },
+   {
+    "incident_id": "INC-012",
+    "series": "inventory-service:db_connection_utilization",
+    "points": 57,
+    "share_of_series": 0.399
+   },
+   {
+    "incident_id": "INC-006",
+    "series": "inventory-service:db_connection_utilization",
+    "points": 52,
+    "share_of_series": 0.335
+   },
+   {
+    "incident_id": "INC-027",
+    "series": "recommendation-service:db_connection_utilization",
+    "points": 51,
+    "share_of_series": 0.267
+   }
+  ],
+  "normal": {
+   "cases": 5,
+   "points": 58,
+   "windows": 34,
+   "high_points": 0,
+   "observations": 29991,
+   "points_in_alert_window": 25,
+   "per_case": {
+    "INC-014": {
+     "points": 16,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 9,
+      "db_connection_utilization": 3,
+      "cpu_usage": 1,
+      "request_rate": 2,
+      "memory_usage": 1
+     }
+    },
+    "INC-019": {
+     "points": 15,
+     "windows": 7,
+     "metrics": {
+      "latency_ms": 7,
+      "downstream_latency_ms": 5,
+      "memory_usage": 3
+     }
+    },
+    "INC-021": {
+     "points": 7,
+     "windows": 4,
+     "metrics": {
+      "latency_ms": 7
+     }
+    },
+    "INC-029": {
+     "points": 13,
+     "windows": 8,
+     "metrics": {
+      "latency_ms": 9,
+      "downstream_latency_ms": 4
+     }
+    },
+    "INC-033": {
+     "points": 7,
+     "windows": 7,
+     "metrics": {
+      "latency_ms": 7
+     }
+    }
+   },
+   "rate_per_1000_observations": 1.934
+  },
+  "failure_pre_fault": {
+   "points": 137,
+   "observations": 88725,
+   "rate_per_1000_observations": 1.544
+  },
+  "failure_fault_period": {
+   "cases": 30,
+   "with_window_in_fault_period": 30,
+   "alert_minutes": 1046,
+   "alert_minutes_with_anomaly": 587,
+   "without_anomaly_in_fault_period": [],
+   "share_of_alert_minutes_with_anomaly": 0.561
+  },
+  "fault_period_points_by_scenario_and_metric": {
+   "DB_CONNECTION_POOL_EXHAUSTION": {
+    "db_connection_utilization": 405,
+    "latency_ms": 94,
+    "error_rate": 64,
+    "downstream_latency_ms": 47,
+    "cpu_usage": 12,
+    "request_rate": 8,
+    "memory_usage": 2
+   },
+   "DOWNSTREAM_SERVICE_TIMEOUT": {
+    "latency_ms": 93,
+    "downstream_latency_ms": 72,
+    "error_rate": 58,
+    "cpu_usage": 9,
+    "request_rate": 8,
+    "db_connection_utilization": 6,
+    "memory_usage": 2
+   },
+   "MEMORY_LEAK": {
+    "memory_usage": 205,
+    "latency_ms": 75,
+    "error_rate": 61,
+    "downstream_latency_ms": 19,
+    "db_connection_utilization": 6,
+    "request_rate": 6,
+    "cpu_usage": 6
+   }
+  }
+ }
+}
